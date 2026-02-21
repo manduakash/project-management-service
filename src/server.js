@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth_routes.js";
 import designationRoutes from "./routes/designation_routes.js";
 import projectRoutes from "./routes/project_routes.js";
+import taskRoutes from "./routes/task_routes.js";
 import authMiddleware from "./middleware/auth_middleware.js";
 
 dotenv.config();
@@ -21,6 +22,7 @@ app.use("/api", authMiddleware);
 
 app.use("/api/designations", designationRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/tasks", taskRoutes);
 
 const PORT = process.env.PORT || 3000;
 
