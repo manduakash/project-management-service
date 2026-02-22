@@ -104,6 +104,75 @@ class TaskController {
       return response.error(res, err.message, 500);
     }
   }
+
+  static async get(req, res) {
+    try {
+      // Accept filters from query string or body
+      const src = Object.keys(req.query).length ? req.query : req.body;
+
+      const taskId = src.taskId ?? src.TaskID ?? 0;
+      const assignedByUserId = src.assignedByUserId ?? src.AssignedByUserID ?? 0;
+      const assignedToUserId = src.assignedToUserId ?? src.AssignedToUserID ?? 0;
+      const projectId = src.projectId ?? src.ProjectID ?? 0;
+      const taskStatus = src.taskStatus ?? src.TaskStatus ?? 0;
+      const taskTypeId = src.taskTypeId ?? src.TaskTypeID ?? 0;
+      const taskPriority = src.taskPriority ?? src.TaskPriority ?? 0;
+
+      const rows = await TaskService.get({
+        taskId,
+        assignedByUserId,
+        assignedToUserId,
+        projectId,
+        taskStatus,
+        taskTypeId,
+        taskPriority,
+      });
+
+      // Group rows by TaskID and aggregate assigned-to fields into arrays
+      const grouped = [];
+      const map = new Map();
+
+      for (const r of rows) {
+        const id = r.TaskID;
+        if (!map.has(id)) {
+          const base = {
+            TaskID: r.TaskID,
+            StatusID: r.StatusID,
+            StatusName: r.StatusName,
+            TypeID: r.TypeID,
+            TypeName: r.TypeName,
+            ProjectID: r.ProjectID,
+            ProjectName: r.ProjectName,
+            PriorityID: r.PriorityID,
+            PriorityName: r.PriorityName,
+            AssignedByUserID: r.AssignedByUserID,
+            AssignedByUserFullName: r.AssignedByUserFullName,
+            AssignedToUsers: [],
+            Title: r.Title,
+            SubTitle: r.SubTitle,
+            Description: r.Description,
+            ProgressPercentage: r.ProgressPercentage,
+            Deadline: r.Deadline
+          };
+          map.set(id, base);
+          grouped.push(base);
+        }
+
+        const entry = map.get(id);
+        // push assigned-to object if present and not already included
+        if (r.AssignedToUserID !== undefined && r.AssignedToUserID !== null) {
+          const aid = Number(r.AssignedToUserID);
+          const name = r.AssignedToUserFullName !== undefined && r.AssignedToUserFullName !== null ? String(r.AssignedToUserFullName) : null;
+          const exists = entry.AssignedToUsers.some(u => u.AssignedToUserID === aid);
+          if (!exists) entry.AssignedToUsers.push({ AssignedToUserID: aid, AssignedToUserFullName: name });
+        }
+      }
+
+      return response.success(res, grouped, "tasks fetched", 200);
+    } catch (err) {
+      return response.error(res, err.message, 500);
+    }
+  }
 }
 
 export default TaskController;

@@ -63,6 +63,39 @@ class TaskModel {
       connection.release();
     }
   }
+
+  static async get_task_details(taskId, assignedByUserId, assignedToUserId, projectId, taskStatus, taskTypeId, taskPriority) {
+    const connection = await pool.getConnection();
+    try {
+      taskId = taskId === undefined || taskId === null ? 0 : taskId;
+      assignedByUserId = assignedByUserId === undefined || assignedByUserId === null ? 0 : assignedByUserId;
+      assignedToUserId = assignedToUserId === undefined || assignedToUserId === null ? 0 : assignedToUserId;
+      projectId = projectId === undefined || projectId === null ? 0 : projectId;
+      taskStatus = taskStatus === undefined || taskStatus === null ? 0 : taskStatus;
+      taskTypeId = taskTypeId === undefined || taskTypeId === null ? 0 : taskTypeId;
+      taskPriority = taskPriority === undefined || taskPriority === null ? 0 : taskPriority;
+
+      const params = [
+        taskId,
+        assignedByUserId,
+        assignedToUserId,
+        projectId,
+        taskStatus,
+        taskTypeId,
+        taskPriority,
+      ];
+
+      const [rows] = await connection.query(
+        "CALL sp_getTaskDetails(?, ?, ?, ?, ?, ?, ?)",
+        params
+      );
+
+      return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default TaskModel;
+

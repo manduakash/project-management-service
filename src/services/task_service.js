@@ -36,6 +36,30 @@ class TaskService {
 
     return errorCode;
   }
+
+  static async get(filters) {
+    const {
+      taskId = 0,
+      assignedByUserId = 0,
+      assignedToUserId = 0,
+      projectId = 0,
+      taskStatus = 0,
+      taskTypeId = 0,
+      taskPriority = 0,
+    } = filters || {};
+
+    const rows = await TaskModel.get_task_details(
+      Number(taskId) || 0,
+      Number(assignedByUserId) || 0,
+      Number(assignedToUserId) || 0,
+      Number(projectId) || 0,
+      Number(taskStatus) || 0,
+      Number(taskTypeId) || 0,
+      Number(taskPriority) || 0
+    );
+
+    return rows;
+  }
 }
 
 export default TaskService;
