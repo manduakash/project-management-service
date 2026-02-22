@@ -51,6 +51,34 @@ class UserModel {
 
     return rows[0][0]; 
   }
+
+  static async update_user_profile(userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey) {
+    const connection = await pool.getConnection();
+    try {
+      userId = userId || 0;
+      email = email || "";
+      contactNumber = contactNumber || "";
+      fullName = fullName || "";
+      profilePicture = profilePicture || "";
+      gitUsername = gitUsername || "";
+      gitPublicKey = gitPublicKey || "";
+
+      const params = [userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey];
+
+      await connection.query(
+        "CALL sp_updateUserProfile(?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
+        params
+      );
+
+      const [[{ ErrorCode }]] = await connection.query(
+        "SELECT @ErrorCode AS ErrorCode"
+      );
+
+      return ErrorCode;
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default UserModel;
