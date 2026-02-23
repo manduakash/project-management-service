@@ -89,7 +89,19 @@ class TaskModel {
         "CALL sp_getTaskDetails(?, ?, ?, ?, ?, ?, ?)",
         params
       );
+      return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
 
+  static async get_task_assignment_members(assignerId) {
+    const connection = await pool.getConnection();
+    try {
+      const [rows] = await connection.query(
+        "CALL sp_getMembersForTaskAssignmentDetails(?)",
+        [assignerId || 0]
+      );
       return rows[0] || [];
     } finally {
       connection.release();

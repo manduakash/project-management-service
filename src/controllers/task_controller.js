@@ -86,7 +86,7 @@ class TaskController {
         subTitle: String(subTitle).trim(),
         description: String(description),
         progressPercentage: progressNum,
-        deadline: new Date(dl).toISOString().slice(0,10),
+        deadline: new Date(dl).toISOString().slice(0, 10),
         entryUser
       });
 
@@ -169,6 +169,20 @@ class TaskController {
       }
 
       return response.success(res, grouped, "tasks fetched", 200);
+    } catch (err) {
+      return response.error(res, err.message, 500);
+    }
+  }
+
+  static async getAssignmentMembers(req, res) {
+    try {
+      const assignerId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      if (!assignerId) {
+        return response.error(res, "invalid token: missing user information", 401);
+      }
+
+      const rows = await TaskService.getAssignmentMembers(assignerId);
+      return response.success(res, rows, "assignment members fetched", 200);
     } catch (err) {
       return response.error(res, err.message, 500);
     }

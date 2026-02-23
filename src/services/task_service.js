@@ -60,6 +60,11 @@ class TaskService {
 
     return rows;
   }
+
+  static async getAssignmentMembers(assignerId) {
+    const rows = await TaskModel.get_task_assignment_members(assignerId);
+    return rows;
+  }
 }
 
 export default TaskService;
