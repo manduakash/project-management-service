@@ -50,29 +50,41 @@ class AuthService {
 
   static async login(username, password) {
 
-  const user = await UserModel.get_user_by_username(username);
+    const user = await UserModel.get_user_by_username(username);
 
-  if (!user) {
-    throw new Error("User not found");
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isMatch = await bcrypt.compare(password, user.PasswordHash);
+
+    if (!isMatch) {
+      throw new Error("Invalid credentials");
+    }
+
+    const payload = {
+      UserID: user.UserID ?? user.UserId ?? user.ua_id ?? null,
+      Username: user.Username ?? user.username ?? null,
+      FullName: user.FullName ?? user.ua_full_name ?? null,
+      RoleID: user.RoleID ?? user.ua_role_id ?? null
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const data = {
+      token,
+      user: {
+        email: user.UserEmail,
+        contact_no: user.ContactNumber,
+        profile_image: user.ProfilePicture,
+        git_username: user.GitUsername,
+        git_public_key: user.GitPublicKey,
+        name: user.UserFullName,
+        role_id: user.RoleID,
+        role: user.RoleName
+      }
+    }
+    return data;
   }
-   
-  const isMatch = await bcrypt.compare(password, user.PasswordHash);
-
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
-
-  const payload = {
-    UserID: user.UserID ?? user.UserId ?? user.ua_id ?? null,
-    Username: user.Username ?? user.username ?? null,
-    FullName: user.FullName ?? user.ua_full_name ?? null,
-    RoleID: user.RoleID ?? user.ua_role_id ?? null
-  };
-
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-  return { token };
-}
 
 }
 

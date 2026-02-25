@@ -5,6 +5,9 @@ class ProjectController {
   static async save(req, res) {
     try {
       const projectId = Number(req.body.projectId ?? req.body.ProjectID ?? 0);
+      const projectType = Number(req.body.projectType ?? req.body.ProjectType ?? 0);
+      const projectPriority = Number(req.body.projectPriority ?? req.body.ProjectPriority ?? 0);
+      const projectStatus = Number(req.body.projectStatus ?? req.body.ProjectStatus ?? 0);
       const projectName = req.body.projectName ?? req.body.ProjectName;
 
       if (!projectName || String(projectName).trim() === "") {
@@ -18,6 +21,9 @@ class ProjectController {
 
       const errorCode = await ProjectService.save({
         projectId,
+        projectType,
+        projectPriority,
+        projectStatus,
         projectName: String(projectName).trim(),
         entryUserId,
       });
@@ -36,7 +42,7 @@ class ProjectController {
       return response.error(res, error.message, 500);
     }
   }
-  
+
   static async getAll(req, res) {
     try {
       const data = await ProjectService.getAll();

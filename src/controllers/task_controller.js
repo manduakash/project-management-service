@@ -187,6 +187,34 @@ class TaskController {
       return response.error(res, err.message, 500);
     }
   }
+
+  static async updateStatus(req, res) {
+    try {
+      const taskId = req.body.TaskID ?? req.body.taskId;
+      const status = req.body.TaskStatus ?? req.body.status;
+      const priority = req.body.TaskPriority ?? req.body.priority;
+      const deadline = req.body.TaskDeadline ?? req.body.deadline;
+
+      if (!taskId || status === undefined || priority === undefined || !deadline) {
+        return response.error(res, "missing parameters: TaskID, TaskStatus, TaskPriority, and TaskDeadline are required", 400);
+      }
+
+      const entryUserId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      if (!entryUserId) {
+        return response.error(res, "invalid token: missing user information", 401);
+      }
+
+      const errorCode = await TaskService.updateStatus(taskId, status, priority, deadline, entryUserId);
+
+      if (errorCode === 0) {
+        return response.success(res, null, "Task status updated successfully", 200);
+      }
+
+      return response.error(res, "failed to update task status", 500);
+    } catch (err) {
+      return response.error(res, err.message, 500);
+    }
+  }
 }
 
 export default TaskController;

@@ -65,6 +65,11 @@ class TaskService {
     const rows = await TaskModel.get_task_assignment_members(assignerId);
     return rows;
   }
+
+  static async updateStatus(taskId, status, priority, deadline, entryUserId) {
+    const errorCode = await TaskModel.update_task_status(taskId, status, priority, deadline, entryUserId);
+    return errorCode;
+  }
 }
 
 export default TaskService;
