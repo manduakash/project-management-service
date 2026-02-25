@@ -20,6 +20,11 @@ class ProjectService {
     const rows = await ProjectModel.get_all_projects();
     return rows;
   }
+
+  static async getByUserId(userId) {
+    const rows = await ProjectModel.get_projects_by_user_id(userId);
+    return rows;
+  }
 }
 
 export default ProjectService;

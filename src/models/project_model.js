@@ -41,6 +41,19 @@ class ProjectModel {
       connection.release();
     }
   }
+
+  static async get_projects_by_user_id(userId) {
+    const connection = await pool.getConnection();
+    try {
+      const [rows] = await connection.query(
+        "CALL sp_getProjectDetailsByUserID(?)",
+        [userId]
+      );
+      return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default ProjectModel;
