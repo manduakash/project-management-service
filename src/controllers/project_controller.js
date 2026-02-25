@@ -65,6 +65,20 @@ class ProjectController {
       return response.error(res, error.message, 500);
     }
   }
+
+  static async getAvailableDevelopers(req, res) {
+    try {
+      const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      if (!userId) {
+        return response.error(res, "invalid token: missing user information", 401);
+      }
+
+      const data = await ProjectService.getAvailableDevelopers(userId);
+      return response.success(res, data, "available developers fetched", 200);
+    } catch (error) {
+      return response.error(res, error.message, 500);
+    }
+  }
 }
 
 export default ProjectController;

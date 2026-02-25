@@ -9,5 +9,7 @@ router.post("/", ProjectController.save);
 router.get("/", ProjectController.getAll);
 // GET /api/projects/my-projects - list projects by logged-in user (JWT protected)
 router.get("/projects-by-user-id", ProjectController.getByUser);
+// GET /api/projects/available-developers - list available developers for project assignment (JWT protected)
+router.get("/available-developers", ProjectController.getAvailableDevelopers);
 
 export default router;

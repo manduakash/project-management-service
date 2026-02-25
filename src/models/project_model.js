@@ -54,6 +54,19 @@ class ProjectModel {
       connection.release();
     }
   }
+
+  static async get_available_developers(userId) {
+    const connection = await pool.getConnection();
+    try {
+      const [rows] = await connection.query(
+        "CALL sp_getAvailableDeveloperForProjectAssignment(?)",
+        [userId]
+      );
+      return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default ProjectModel;

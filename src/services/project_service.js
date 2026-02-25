@@ -25,6 +25,11 @@ class ProjectService {
     const rows = await ProjectModel.get_projects_by_user_id(userId);
     return rows;
   }
+
+  static async getAvailableDevelopers(userId) {
+    const rows = await ProjectModel.get_available_developers(userId);
+    return rows;
+  }
 }
 
 export default ProjectService;
