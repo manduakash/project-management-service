@@ -67,6 +67,26 @@ class ProjectModel {
       connection.release();
     }
   }
+
+  static async assign_user_to_project(userId, projectId) {
+    const connection = await pool.getConnection();
+    try {
+      const params = [userId, projectId];
+
+      await connection.query(
+        "CALL sp_saveUserProjectDetails(?, ?, @ErrorCode)",
+        params
+      );
+
+      const [[{ ErrorCode }]] = await connection.query(
+        "SELECT @ErrorCode AS ErrorCode"
+      );
+
+      return ErrorCode;
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default ProjectModel;

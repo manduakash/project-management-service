@@ -11,5 +11,7 @@ router.get("/", ProjectController.getAll);
 router.get("/projects-by-user-id", ProjectController.getByUser);
 // GET /api/projects/available-developers - list available developers for project assignment (JWT protected)
 router.get("/available-developers", ProjectController.getAvailableDevelopers);
+// POST /api/projects/assign-user - assign a user to a project (JWT protected)
+router.post("/assign-user", ProjectController.assignUser);
 
 export default router;

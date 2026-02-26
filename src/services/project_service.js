@@ -30,6 +30,11 @@ class ProjectService {
     const rows = await ProjectModel.get_available_developers(userId);
     return rows;
   }
+
+  static async assignUserToProject(userId, projectId) {
+    const errorCode = await ProjectModel.assign_user_to_project(userId, projectId);
+    return errorCode;
+  }
 }
 
 export default ProjectService;

@@ -79,6 +79,29 @@ class ProjectController {
       return response.error(res, error.message, 500);
     }
   }
+
+  static async assignUser(req, res) {
+    try {
+      const userId = req.body.userId ?? req.body.UserID;
+      const projectId = req.body.projectId ?? req.body.ProjectID;
+
+      if (!userId || !projectId) {
+        return response.error(res, "missing parameters: userId and projectId are required", 400);
+      }
+
+      const errorCode = await ProjectService.assignUserToProject(userId, projectId);
+
+      if (errorCode === 0) {
+        return response.success(res, null, "User assigned to project successfully", 201);
+      } else if (errorCode === 2) {
+        return response.error(res, "User is already assigned to this project", 400);
+      } else {
+        return response.error(res, "Failed to assign user to project", 500);
+      }
+    } catch (error) {
+      return response.error(res, error.message, 500);
+    }
+  }
 }
 
 export default ProjectController;
