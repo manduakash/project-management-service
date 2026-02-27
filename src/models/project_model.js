@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 
 class ProjectModel {
 
-  static async save_project(projectId, projectType, projectPriority, projectStatus, projectName, entryUserId) {
+  static async save_project(projectId, projectType, projectPriority, projectStatus, projectName, progressPercentage, projectDeadline, entryUserId) {
     const connection = await pool.getConnection();
     try {
       projectId = projectId === undefined || projectId === null ? 0 : projectId;
@@ -10,12 +10,14 @@ class ProjectModel {
       projectPriority = projectPriority || 0;
       projectStatus = projectStatus || 0;
       projectName = projectName || "";
+      progressPercentage = progressPercentage || 0;
+      projectDeadline = projectDeadline || null;
       entryUserId = entryUserId || 0;
 
-      const params = [projectId, projectType, projectPriority, projectStatus, projectName, entryUserId];
+      const params = [projectId, projectType, projectPriority, projectStatus, projectName, progressPercentage, projectDeadline, entryUserId];
 
       await connection.query(
-        "CALL sp_saveProjectDetails(?, ?, ?, ?, ?, ?, @ErrorCode)",
+        "CALL sp_saveProjectDetails(?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
         params
       );
 

@@ -28,6 +28,24 @@ class MasterController {
             return response.error(res, error.message, 500);
         }
     }
+
+    static async getAllTaskStatuses(req, res) {
+        try {
+            const data = await MasterService.getAllTaskStatuses();
+            return response.success(res, data, "task statuses fetched", 200);
+        } catch (error) {
+            return response.error(res, error.message, 500);
+        }
+    }
+
+    static async getAllTaskTypes(req, res) {
+        try {
+            const data = await MasterService.getAllTaskTypes();
+            return response.success(res, data, "task types fetched", 200);
+        } catch (error) {
+            return response.error(res, error.message, 500);
+        }
+    }
 }
 
 export default MasterController;

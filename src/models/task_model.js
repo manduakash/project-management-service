@@ -121,6 +121,19 @@ class TaskModel {
       connection.release();
     }
   }
+
+  static async get_available_developers_for_task_assignment(userId, projectId) {
+    const connection = await pool.getConnection();
+    try {
+      const [rows] = await connection.query(
+        "CALL sp_getAvailableDeveloperForTaskAssignment(?, ?)",
+        [userId || 0, projectId || 0]
+      );
+      return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default TaskModel;

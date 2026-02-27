@@ -15,6 +15,16 @@ class MasterService {
         const rows = await MasterModel.get_all_project_types();
         return rows;
     }
+
+    static async getAllTaskStatuses() {
+        const rows = await MasterModel.get_all_task_statuses();
+        return rows;
+    }
+
+    static async getAllTaskTypes() {
+        const rows = await MasterModel.get_all_task_types();
+        return rows;
+    }
 }
 
 export default MasterService;

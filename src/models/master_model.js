@@ -36,6 +36,29 @@ class MasterModel {
             connection.release();
         }
     }
+    static async get_all_task_statuses() {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getAllTaskStatusDetails()"
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_all_task_types() {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getAllTaskTypeDetails()"
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default MasterModel;

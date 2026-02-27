@@ -215,6 +215,25 @@ class TaskController {
       return response.error(res, err.message, 500);
     }
   }
+
+  static async getAvailableDevelopers(req, res) {
+    try {
+      const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      if (!userId) {
+        return response.error(res, "invalid token: missing user information", 401);
+      }
+
+      const projectId = req.query.projectId ?? req.query.ProjectID;
+      if (!projectId) {
+        return response.error(res, "missing parameter: projectId is required", 400);
+      }
+
+      const data = await TaskService.getAvailableDevelopersForTaskAssignment(userId, projectId);
+      return response.success(res, data, "available developers for task assignment fetched", 200);
+    } catch (err) {
+      return response.error(res, err.message, 500);
+    }
+  }
 }
 
 export default TaskController;

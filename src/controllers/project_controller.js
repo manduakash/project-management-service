@@ -9,6 +9,14 @@ class ProjectController {
       const projectPriority = Number(req.body.projectPriority ?? req.body.ProjectPriority ?? 0);
       const projectStatus = Number(req.body.projectStatus ?? req.body.ProjectStatus ?? 0);
       const projectName = req.body.projectName ?? req.body.ProjectName;
+      const projectDeadline = req.body.projectDeadline ?? req.body.ProjectDeadline ?? null;
+      let progressPercentage = req.body.progressPercentage ?? req.body.ProgressPercentage ?? 0;
+
+      if (isNaN(progressPercentage) || progressPercentage === "" || progressPercentage === null) {
+        progressPercentage = 0;
+      } else {
+        progressPercentage = Number(progressPercentage);
+      }
 
       if (!projectName || String(projectName).trim() === "") {
         return response.error(res, "missing parameters: projectName", 400);
@@ -25,6 +33,8 @@ class ProjectController {
         projectPriority,
         projectStatus,
         projectName: String(projectName).trim(),
+        progressPercentage,
+        projectDeadline,
         entryUserId,
       });
 
@@ -93,8 +103,10 @@ class ProjectController {
 
       if (errorCode === 0) {
         return response.success(res, null, "User assigned to project successfully", 201);
-      } else if (errorCode === 2) {
+      } else if (errorCode === 1) {
         return response.error(res, "User is already assigned to this project", 400);
+      } else if (errorCode === 2) {
+        return response.error(res, "Only users with the 'Developer' role can be assigned to projects", 400);
       } else {
         return response.error(res, "Failed to assign user to project", 500);
       }

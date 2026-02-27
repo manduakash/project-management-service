@@ -70,6 +70,11 @@ class TaskService {
     const errorCode = await TaskModel.update_task_status(taskId, status, priority, deadline, entryUserId);
     return errorCode;
   }
+
+  static async getAvailableDevelopersForTaskAssignment(userId, projectId) {
+    const rows = await TaskModel.get_available_developers_for_task_assignment(userId, projectId);
+    return rows;
+  }
 }
 
 export default TaskService;

@@ -9,5 +9,9 @@ router.get("/project-status", MasterController.getAllProjectStatuses);
 router.get("/priority", MasterController.getAllPriorities);
 // GET /api/master/project-type - list active project types
 router.get("/project-type", MasterController.getAllProjectTypes);
+// GET /api/master/task-status - list active task statuses
+router.get("/task-status", MasterController.getAllTaskStatuses);
+// GET /api/master/task-type - list active task types
+router.get("/task-type", MasterController.getAllTaskTypes);
 
 export default router;

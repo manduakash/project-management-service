@@ -2,7 +2,16 @@ import ProjectModel from "../models/project_model.js";
 
 class ProjectService {
   static async save(projectData) {
-    const { projectId = 0, projectType = 0, projectPriority = 0, projectStatus = 0, projectName = "", entryUserId } = projectData;
+    const {
+      projectId = 0,
+      projectType = 0,
+      projectPriority = 0,
+      projectStatus = 0,
+      projectName = "",
+      progressPercentage = 0,
+      projectDeadline = null,
+      entryUserId
+    } = projectData;
 
     const errorCode = await ProjectModel.save_project(
       projectId,
@@ -10,6 +19,8 @@ class ProjectService {
       projectPriority,
       projectStatus,
       projectName || "",
+      progressPercentage,
+      projectDeadline,
       entryUserId
     );
 

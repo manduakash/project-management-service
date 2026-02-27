@@ -11,5 +11,7 @@ router.get("/", TaskController.get);
 router.get("/assignment-members", TaskController.getAssignmentMembers);
 // PATCH /api/tasks/status - update task status, priority, and deadline (JWT protected)
 router.patch("/status", TaskController.updateStatus);
+// GET /api/tasks/available-developers - fetch available developers for task assignment (JWT protected)
+router.get("/available-developers", TaskController.getAvailableDevelopers);
 
 export default router;
