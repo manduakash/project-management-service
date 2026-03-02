@@ -49,10 +49,10 @@ class UserModel {
 
     // MySQL SP returns nested array
 
-    return rows[0][0]; 
+    return rows[0][0];
   }
 
-  static async update_user_profile(userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey) {
+  static async update_user_profile(userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey, designations) {
     const connection = await pool.getConnection();
     try {
       userId = userId || 0;
@@ -62,11 +62,13 @@ class UserModel {
       profilePicture = profilePicture || "";
       gitUsername = gitUsername || "";
       gitPublicKey = gitPublicKey || "";
+      // Ensure designations is a stringified JSON if it's an object/array
+      const designationsJson = typeof designations === 'string' ? designations : JSON.stringify(designations || []);
 
-      const params = [userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey];
+      const params = [userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey, designationsJson];
 
       await connection.query(
-        "CALL sp_updateUserProfile(?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
+        "CALL sp_updateUserProfile(?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
         params
       );
 

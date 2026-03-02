@@ -11,6 +11,7 @@ class UserController {
                 profilePicture,
                 gitUsername,
                 gitPublicKey,
+                designations
             } = req.body;
 
             const userId = req.user?.UserID || req.user?.UserId || req.user?.ua_id;
@@ -18,6 +19,9 @@ class UserController {
             if (!userId) {
                 return response.error(res, "User ID not found in token", 401);
             }
+
+            // Ensure designations is a valid array, otherwise default to []
+            const designationsArray = Array.isArray(designations) ? designations : [];
 
             // Basic validation
             if (!email || !fullName) {
@@ -32,6 +36,7 @@ class UserController {
                 profilePicture,
                 gitUsername,
                 gitPublicKey,
+                designations: designationsArray
             });
 
             return response.success(res, null, result.message, 200);
