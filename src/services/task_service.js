@@ -1,37 +1,35 @@
 import TaskModel from "../models/task_model.js";
 
 class TaskService {
-  static async save(taskData) {
+  static async saveTaskDetails(taskData) {
     const {
       taskId = 0,
-      statusId = 0,
-      typeId = 0,
+      taskStatus = 0,
+      taskTypeId = 0,
       projectId = 0,
-      priorityId = 0,
-      assignedByUserId = 0,
-      assignedToUsers = JSON.stringify([]),
+      priority = 0,
       title = "",
       subTitle = "",
-      description = "",
+      taskDescription = "",
       progressPercentage = 0,
       deadline = null,
-      entryUser = ""
+      assignedToUserId = 0,
+      entryUserId = 0
     } = taskData;
 
-    const errorCode = await TaskModel.save_task(
+    const errorCode = await TaskModel.save_task_details(
       taskId,
-      statusId,
-      typeId,
+      taskStatus,
+      taskTypeId,
       projectId,
-      priorityId,
-      assignedByUserId,
-      assignedToUsers,
+      priority,
       title,
       subTitle,
-      description,
+      taskDescription,
       progressPercentage,
       deadline,
-      entryUser
+      assignedToUserId,
+      entryUserId
     );
 
     return errorCode;
@@ -74,6 +72,16 @@ class TaskService {
   static async getAvailableDevelopersForTaskAssignment(userId, projectId) {
     const rows = await TaskModel.get_available_developers_for_task_assignment(userId, projectId);
     return rows;
+  }
+
+  static async getTaskDetailsByUserId(taskId, userId, projectId, taskStatusId, taskTypeId, taskPriority) {
+    const rows = await TaskModel.get_task_details_by_user_id(taskId, userId, projectId, taskStatusId, taskTypeId, taskPriority);
+    return rows;
+  }
+
+  static async remove(taskId, deleteUserId) {
+    const errorCode = await TaskModel.remove_task_details(taskId, deleteUserId);
+    return errorCode;
   }
 }
 

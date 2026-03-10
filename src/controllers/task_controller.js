@@ -2,96 +2,71 @@ import TaskService from "../services/task_service.js";
 import response from "../utils/response.js";
 
 class TaskController {
-  static async save(req, res) {
+  static async saveTaskDetails(req, res) {
     try {
-      const taskId = req.body.taskId ?? req.body.TaskID;
-      const statusId = req.body.statusId ?? req.body.StatusID;
-      const typeId = req.body.typeId ?? req.body.TypeID;
+      const taskId = req.body.taskId ?? req.body.TaskID ?? 0;
+      const taskStatus = req.body.taskStatus ?? req.body.TaskStatus;
+      const taskTypeId = req.body.taskTypeId ?? req.body.TaskTypeID;
       const projectId = req.body.projectId ?? req.body.ProjectID;
-      const priorityId = req.body.priorityId ?? req.body.PriorityID;
-      const assignedByUserId = req.body.assignedByUserId ?? req.body.AssignedByUserID;
-      const assignedToUsers = req.body.assignedToUsers ?? req.body.AssignedToUsers;
+      const priority = req.body.priority ?? req.body.Priority;
       const title = req.body.title ?? req.body.Title;
       const subTitle = req.body.subTitle ?? req.body.SubTitle;
-      const description = req.body.description ?? req.body.Description;
+      const taskDescription = req.body.taskDescription ?? req.body.TaskDescription ?? req.body.description ?? req.body.Description;
       const progressPercentage = req.body.progressPercentage ?? req.body.ProgressPercentage;
       const deadline = req.body.deadline ?? req.body.Deadline;
+      const assignedToUserId = req.body.assignedToUserId ?? req.body.AssignedToUserID;
 
-      // Validate presence of all parameters required by the stored procedure
+      // Required field validation
       const missing = [];
-      if (taskId === undefined) missing.push("TaskID");
-      if (statusId === undefined) missing.push("StatusID");
-      if (typeId === undefined) missing.push("TypeID");
+      if (taskStatus === undefined) missing.push("TaskStatus");
+      if (taskTypeId === undefined) missing.push("TaskTypeID");
       if (projectId === undefined) missing.push("ProjectID");
-      if (priorityId === undefined) missing.push("PriorityID");
-      if (assignedByUserId === undefined) missing.push("AssignedByUserID");
-      if (assignedToUsers === undefined) missing.push("AssignedToUsers");
+      if (priority === undefined) missing.push("Priority");
       if (title === undefined) missing.push("Title");
       if (subTitle === undefined) missing.push("SubTitle");
-      if (description === undefined) missing.push("Description");
+      if (taskDescription === undefined) missing.push("TaskDescription");
       if (progressPercentage === undefined) missing.push("ProgressPercentage");
       if (deadline === undefined) missing.push("Deadline");
+      if (assignedToUserId === undefined) missing.push("AssignedToUserID");
 
       if (missing.length > 0) {
         return response.error(res, `missing parameters: ${missing.join(", ")}`, 400);
       }
 
-      // Additional validations
       if (String(title).trim() === "") return response.error(res, "Title cannot be empty", 400);
       if (String(subTitle).trim() === "") return response.error(res, "SubTitle cannot be empty", 400);
-      if (String(description).trim() === "") return response.error(res, "Description cannot be empty", 400);
+      if (String(taskDescription).trim() === "") return response.error(res, "TaskDescription cannot be empty", 400);
 
-      // progress must be integer 1-100
       const progressNum = Number(progressPercentage);
       if (!Number.isInteger(progressNum) || progressNum < 1 || progressNum > 100) {
         return response.error(res, "ProgressPercentage must be an integer between 1 and 100", 400);
       }
 
-      // assignedToUsers must be array or valid JSON
-      let assignedToJson = assignedToUsers;
-      if (Array.isArray(assignedToUsers)) {
-        assignedToJson = JSON.stringify(assignedToUsers);
-      } else if (typeof assignedToUsers === "string") {
-        try {
-          const parsed = JSON.parse(assignedToUsers);
-          if (!Array.isArray(parsed)) return response.error(res, "AssignedToUsers must be a JSON array", 400);
-          assignedToJson = JSON.stringify(parsed);
-        } catch (err) {
-          return response.error(res, "AssignedToUsers must be valid JSON", 400);
-        }
-      } else {
-        return response.error(res, "AssignedToUsers must be a JSON array", 400);
-      }
-
-      // deadline should be a valid date string (YYYY-MM-DD or ISO)
-      if (deadline === null || deadline === "") {
-        return response.error(res, "Deadline cannot be empty", 400);
-      }
+      if (!deadline) return response.error(res, "Deadline cannot be empty", 400);
       const dl = Date.parse(deadline);
       if (Number.isNaN(dl)) return response.error(res, "Deadline must be a valid date", 400);
 
-      // Entry user from token (mandatory)
-      const entryUser = String(req.user?.UserID ?? req.user?.UserId ?? req.user?.Username ?? "");
-      if (!entryUser) return response.error(res, "invalid token: missing user information", 401);
+      // EntryUserID comes from JWT
+      const entryUserId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      if (!entryUserId) return response.error(res, "invalid token: missing user information", 401);
 
-      const errorCode = await TaskService.save({
+      const errorCode = await TaskService.saveTaskDetails({
         taskId: Number(taskId),
-        statusId: Number(statusId),
-        typeId: Number(typeId),
+        taskStatus: Number(taskStatus),
+        taskTypeId: Number(taskTypeId),
         projectId: Number(projectId),
-        priorityId: Number(priorityId),
-        assignedByUserId: Number(assignedByUserId),
-        assignedToUsers: assignedToJson,
+        priority: Number(priority),
         title: String(title).trim(),
         subTitle: String(subTitle).trim(),
-        description: String(description),
+        taskDescription: String(taskDescription),
         progressPercentage: progressNum,
         deadline: new Date(dl).toISOString().slice(0, 10),
-        entryUser
+        assignedToUserId: Number(assignedToUserId),
+        entryUserId: Number(entryUserId)
       });
 
       if (errorCode === 0) {
-        const message = taskId === 0 ? "Task created successfully" : "Task updated successfully";
+        const message = Number(taskId) === 0 ? "Task created successfully" : "Task updated successfully";
         return response.success(res, null, message, 200);
       }
 
@@ -128,47 +103,29 @@ class TaskController {
         taskPriority,
       });
 
-      // Group rows by TaskID and aggregate assigned-to fields into arrays
-      const grouped = [];
-      const map = new Map();
+      // Each task has a single assigned user — return a flat response
+      const data = rows.map(r => ({
+        TaskID: r.TaskID,
+        StatusID: r.StatusID,
+        StatusName: r.StatusName,
+        TypeID: r.TypeID,
+        TypeName: r.TypeName,
+        ProjectID: r.ProjectID,
+        ProjectName: r.ProjectName,
+        PriorityID: r.PriorityID,
+        PriorityName: r.PriorityName,
+        AssignedByUserID: r.AssignedByUserID,
+        AssignedByUserFullName: r.AssignedByUserFullName,
+        AssignedToUserID: r.AssignedToUserID ?? null,
+        AssignedToUserFullName: r.AssignedToUserFullName ?? null,
+        Title: r.Title,
+        SubTitle: r.SubTitle,
+        Description: r.Description,
+        ProgressPercentage: r.ProgressPercentage,
+        Deadline: r.Deadline
+      }));
 
-      for (const r of rows) {
-        const id = r.TaskID;
-        if (!map.has(id)) {
-          const base = {
-            TaskID: r.TaskID,
-            StatusID: r.StatusID,
-            StatusName: r.StatusName,
-            TypeID: r.TypeID,
-            TypeName: r.TypeName,
-            ProjectID: r.ProjectID,
-            ProjectName: r.ProjectName,
-            PriorityID: r.PriorityID,
-            PriorityName: r.PriorityName,
-            AssignedByUserID: r.AssignedByUserID,
-            AssignedByUserFullName: r.AssignedByUserFullName,
-            AssignedToUsers: [],
-            Title: r.Title,
-            SubTitle: r.SubTitle,
-            Description: r.Description,
-            ProgressPercentage: r.ProgressPercentage,
-            Deadline: r.Deadline
-          };
-          map.set(id, base);
-          grouped.push(base);
-        }
-
-        const entry = map.get(id);
-        // push assigned-to object if present and not already included
-        if (r.AssignedToUserID !== undefined && r.AssignedToUserID !== null) {
-          const aid = Number(r.AssignedToUserID);
-          const name = r.AssignedToUserFullName !== undefined && r.AssignedToUserFullName !== null ? String(r.AssignedToUserFullName) : null;
-          const exists = entry.AssignedToUsers.some(u => u.AssignedToUserID === aid);
-          if (!exists) entry.AssignedToUsers.push({ AssignedToUserID: aid, AssignedToUserFullName: name });
-        }
-      }
-
-      return response.success(res, grouped, "tasks fetched", 200);
+      return response.success(res, data, "tasks fetched", 200);
     } catch (err) {
       return response.error(res, err.message, 500);
     }
@@ -230,6 +187,36 @@ class TaskController {
 
       const data = await TaskService.getAvailableDevelopersForTaskAssignment(userId, projectId);
       return response.success(res, data, "available developers for task assignment fetched", 200);
+    } catch (err) {
+      return response.error(res, err.message, 500);
+    }
+  }
+
+  static async getTaskDetailsByUserId(req, res) {
+    try {
+      const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      if (!userId) {
+        return response.error(res, "invalid token: missing user information", 401);
+      }
+
+      const src = Object.keys(req.query).length ? req.query : req.body;
+
+      const taskId = Number(src.taskId ?? src.TaskID ?? 0);
+      const projectId = Number(src.projectId ?? src.ProjectID ?? 0);
+      const taskStatusId = Number(src.taskStatusId ?? src.TaskStatusID ?? 0);
+      const taskTypeId = Number(src.taskTypeId ?? src.TaskTypeID ?? 0);
+      const taskPriority = Number(src.taskPriority ?? src.TaskPriority ?? 0);
+
+      const data = await TaskService.getTaskDetailsByUserId(
+        taskId,
+        userId,
+        projectId,
+        taskStatusId,
+        taskTypeId,
+        taskPriority
+      );
+
+      return response.success(res, data, "task details fetched", 200);
     } catch (err) {
       return response.error(res, err.message, 500);
     }

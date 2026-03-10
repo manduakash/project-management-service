@@ -2,62 +2,27 @@ import pool from "../config/db.js";
 
 class TaskModel {
 
-  static async save_task(
-    taskId,
-    statusId,
-    typeId,
-    projectId,
-    priorityId,
-    assignedByUserId,
-    assignedToUsers,
-    title,
-    subTitle,
-    description,
-    progressPercentage,
-    deadline,
-    entryUser
-  ) {
+  static async save_task_details(taskId, taskStatus, taskTypeId, projectId, priority, title, subTitle, taskDescription, progressPercentage, deadline, assignedToUserId, entryUserId) {
     const connection = await pool.getConnection();
     try {
-      taskId = taskId === undefined || taskId === null ? 0 : taskId;
-      statusId = statusId || 0;
-      typeId = typeId || 0;
-      projectId = projectId || 0;
-      priorityId = priorityId || 0;
-      assignedByUserId = assignedByUserId || 0;
-      assignedToUsers = assignedToUsers || JSON.stringify([]);
-      title = title || "";
-      subTitle = subTitle || "";
-      description = description || "";
-      progressPercentage = progressPercentage || 0;
-      deadline = deadline || null;
-      entryUser = entryUser || "system";
-
-      const params = [
-        taskId,
-        statusId,
-        typeId,
-        projectId,
-        priorityId,
-        assignedByUserId,
-        assignedToUsers,
-        title,
-        subTitle,
-        description,
-        progressPercentage,
-        deadline,
-        entryUser
-      ];
-
       await connection.query(
-        "CALL sp_saveUserTaskDetails(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
-        params
+        "CALL sp_saveTaskDetails(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
+        [
+          taskId || 0,
+          taskStatus || 0,
+          taskTypeId || 0,
+          projectId || 0,
+          priority || 0,
+          title || "",
+          subTitle || "",
+          taskDescription || "",
+          progressPercentage || 0,
+          deadline || null,
+          assignedToUserId || 0,
+          entryUserId || 0
+        ]
       );
-
-      const [[{ ErrorCode }]] = await connection.query(
-        "SELECT @ErrorCode AS ErrorCode"
-      );
-
+      const [[{ ErrorCode }]] = await connection.query("SELECT @ErrorCode AS ErrorCode");
       return ErrorCode;
     } finally {
       connection.release();
@@ -130,6 +95,33 @@ class TaskModel {
         [userId || 0, projectId || 0]
       );
       return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async get_task_details_by_user_id(taskId, userId, projectId, taskStatusId, taskTypeId, taskPriority) {
+    const connection = await pool.getConnection();
+    try {
+      const [rows] = await connection.query(
+        "CALL sp_getTaskDetailsByUserID(?, ?, ?, ?, ?, ?)",
+        [taskId || 0, userId || 0, projectId || 0, taskStatusId || 0, taskTypeId || 0, taskPriority || 0]
+      );
+      return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async remove_task_details(taskId, deleteUserId) {
+    const connection = await pool.getConnection();
+    try {
+      await connection.query(
+        "CALL sp_removeTaskDetails(?, ?, @ErrorCode)",
+        [taskId, deleteUserId]
+      );
+      const [[{ ErrorCode }]] = await connection.query("SELECT @ErrorCode AS ErrorCode");
+      return ErrorCode;
     } finally {
       connection.release();
     }

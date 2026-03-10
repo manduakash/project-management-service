@@ -4,7 +4,7 @@ import TaskController from "../controllers/task_controller.js";
 const router = express.Router();
 
 // POST /api/tasks - create or update task (JWT protected)
-router.post("/", TaskController.save);
+router.post("/", TaskController.saveTaskDetails);
 // GET /api/tasks - fetch tasks with optional filters (JWT protected)
 router.get("/", TaskController.get);
 // GET /api/tasks/assignment-members - fetch members for assignment (JWT protected)
@@ -13,5 +13,7 @@ router.get("/assignment-members", TaskController.getAssignmentMembers);
 router.patch("/status", TaskController.updateStatus);
 // GET /api/tasks/available-developers - fetch available developers for task assignment (JWT protected)
 router.get("/available-developers", TaskController.getAvailableDevelopers);
+// GET /api/tasks/my-tasks - fetch task details for the logged-in developer (JWT protected)
+router.get("/my-tasks", TaskController.getTaskDetailsByUserId);
 
 export default router;
