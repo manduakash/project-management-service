@@ -37,6 +37,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/users", userRoutes);
 
 // app.use("/api/admin", authorize(["admin"]), adminRoutes);
+// app.use("/api/admin", authorize(["admin"]), adminRoutes);
 
 
 
