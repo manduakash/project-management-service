@@ -64,7 +64,7 @@ class ProjectController {
 
   static async getByUser(req, res) {
     try {
-      const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      const userId = req.user?.UserID
       if (!userId) {
         return response.error(res, "invalid token: missing user information", 401);
       }
@@ -78,7 +78,7 @@ class ProjectController {
 
   static async getAvailableDevelopers(req, res) {
     try {
-      const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      const userId = req.user?.UserID
       if (!userId) {
         return response.error(res, "invalid token: missing user information", 401);
       }

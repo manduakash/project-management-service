@@ -47,7 +47,7 @@ class TaskController {
       if (Number.isNaN(dl)) return response.error(res, "Deadline must be a valid date", 400);
 
       // EntryUserID comes from JWT
-      const entryUserId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      const entryUserId = req.user?.UserID
       if (!entryUserId) return response.error(res, "invalid token: missing user information", 401);
 
       const errorCode = await TaskService.saveTaskDetails({
@@ -86,8 +86,17 @@ class TaskController {
       const src = Object.keys(req.query).length ? req.query : req.body;
 
       const taskId = src.taskId ?? src.TaskID ?? 0;
-      const assignedByUserId = src.assignedByUserId ?? src.AssignedByUserID ?? 0;
-      const assignedToUserId = src.assignedToUserId ?? src.AssignedToUserID ?? 0;
+      const userId = req.user?.UserID
+      const roleId = req.user?.RoleID;
+      let assignedByUserId = 0;
+      let assignedToUserId = 0;
+
+      if(roleId === 2) { // lead
+        assignedByUserId = userId;
+      } else if (roleId === 3) { // developer
+        assignedToUserId = userId;
+      }
+
       const projectId = src.projectId ?? src.ProjectID ?? 0;
       const taskStatus = src.taskStatus ?? src.TaskStatus ?? 0;
       const taskTypeId = src.taskTypeId ?? src.TaskTypeID ?? 0;
@@ -133,7 +142,7 @@ class TaskController {
 
   static async getAssignmentMembers(req, res) {
     try {
-      const assignerId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      const assignerId = req.user?.UserID
       if (!assignerId) {
         return response.error(res, "invalid token: missing user information", 401);
       }
@@ -156,7 +165,7 @@ class TaskController {
         return response.error(res, "missing parameters: TaskID, TaskStatus, TaskPriority, and TaskDeadline are required", 400);
       }
 
-      const entryUserId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      const entryUserId = req.user?.UserID
       if (!entryUserId) {
         return response.error(res, "invalid token: missing user information", 401);
       }
@@ -175,7 +184,7 @@ class TaskController {
 
   static async getAvailableDevelopers(req, res) {
     try {
-      const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      const userId = req.user?.UserID
       if (!userId) {
         return response.error(res, "invalid token: missing user information", 401);
       }
@@ -194,7 +203,7 @@ class TaskController {
 
   static async getTaskDetailsByUserId(req, res) {
     try {
-      const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+      const userId = req.user?.UserID
       if (!userId) {
         return response.error(res, "invalid token: missing user information", 401);
       }

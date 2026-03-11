@@ -4,7 +4,7 @@ import response from "../utils/response.js";
 class DashboardController {
     static async getCount(req, res) {
         try {
-            const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+            const userId = req.user?.UserID
             if (!userId) {
                 return response.error(res, "invalid token: missing user information", 401);
             }
@@ -17,7 +17,7 @@ class DashboardController {
     }
     static async get(req, res) {
         try {
-            const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+            const userId = req.user?.UserID
             if (!userId) {
                 return response.error(res, "invalid token: missing user information", 401);
             }
