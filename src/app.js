@@ -23,7 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api", authMiddleware);
 app.use("/api/admin", authorize([1]));
 app.use("/api/lead", authorize([2]));
-app.use("/api/developer", authorize([3]));
+app.use("/api/developer", authorize([2, 3]));
 app.use("/api/master", authorize([1, 2, 3]));
 
 app.use("/api/developer/dashboard", dashboardRoutes);

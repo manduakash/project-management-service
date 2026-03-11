@@ -2,6 +2,19 @@ import DashboardService from "../services/dashboard_service.js";
 import response from "../utils/response.js";
 
 class DashboardController {
+    static async getCount(req, res) {
+        try {
+            const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+            const rows = await DashboardService.getDashboardCount(userId);
+            const data = rows.length > 0 ? rows[0] : {};
+            return response.success(res, data, "dashboard count fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
     static async get(req, res) {
         try {
             const userId = req.user?.UserID ?? req.user?.UserId ?? req.user?.ua_id;
