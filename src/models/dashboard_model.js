@@ -1,3 +1,4 @@
+
 import pool from "../config/db.js";
 
 class DashboardModel {
@@ -19,6 +20,19 @@ class DashboardModel {
             const [rows] = await connection.query(
                 "CALL sp_getDashboardDetails(?, ?, ?)",
                 [userId, fromDate, toDate]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+        static async get_team_member_graph_details(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getDashboardTeamMemberGraphDetails(?)",
+                [userId]
             );
             return rows[0] || [];
         } finally {

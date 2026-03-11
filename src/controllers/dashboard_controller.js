@@ -1,3 +1,4 @@
+
 import DashboardService from "../services/dashboard_service.js";
 import response from "../utils/response.js";
 
@@ -48,6 +49,18 @@ class DashboardController {
             };
 
             return response.success(res, data, "dashboard details fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+        static async getTeamMemberGraphDetails(req, res) {
+        try {
+            const userId = req.user?.UserID;
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+            const rows = await DashboardService.getTeamMemberGraphDetails(userId);
+            return response.success(res, rows, "team member graph details fetched", 200);
         } catch (err) {
             return response.error(res, err.message, 500);
         }
