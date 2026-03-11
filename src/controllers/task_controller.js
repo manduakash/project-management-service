@@ -38,8 +38,8 @@ class TaskController {
       if (String(taskDescription).trim() === "") return response.error(res, "TaskDescription cannot be empty", 400);
 
       const progressNum = Number(progressPercentage);
-      if (!Number.isInteger(progressNum) || progressNum < 1 || progressNum > 100) {
-        return response.error(res, "ProgressPercentage must be an integer between 1 and 100", 400);
+      if (!Number.isInteger(progressNum) || progressNum < 0 || progressNum > 100) {
+        return response.error(res, "ProgressPercentage must be an integer between 0 and 100", 400);
       }
 
       if (!deadline) return response.error(res, "Deadline cannot be empty", 400);
