@@ -158,11 +158,13 @@ class TaskController {
     try {
       const taskId = req.body.TaskID ?? req.body.taskId;
       const status = req.body.TaskStatus ?? req.body.status;
+      const isRejected = req.body.IsRejected ?? req.body.isRejected;
+      const Remarks = req.body.Remarks ?? req.body.Remarks ?? "";
       const priority = req.body.TaskPriority ?? req.body.priority;
       const deadline = req.body.TaskDeadline ?? req.body.deadline;
 
-      if (!taskId || status === undefined || priority === undefined || !deadline) {
-        return response.error(res, "missing parameters: TaskID, TaskStatus, TaskPriority, and TaskDeadline are required", 400);
+      if (!taskId || status === undefined || isRejected === undefined || priority === undefined || !deadline) {
+        return response.error(res, "missing parameters: TaskID, TaskStatus, IsRejected, TaskPriority, and TaskDeadline are required", 400);
       }
 
       const entryUserId = req.user?.UserID
@@ -170,7 +172,7 @@ class TaskController {
         return response.error(res, "invalid token: missing user information", 401);
       }
 
-      const errorCode = await TaskService.updateStatus(taskId, status, priority, deadline, entryUserId);
+      const errorCode = await TaskService.updateStatus(taskId, status, isRejected, Remarks, priority, deadline, entryUserId);
 
       if (errorCode === 0) {
         return response.success(res, null, "Task status updated successfully", 200);

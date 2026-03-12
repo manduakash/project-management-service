@@ -73,12 +73,12 @@ class TaskModel {
     }
   }
 
-  static async update_task_status(taskId, status, priority, deadline, entryUserId) {
+  static async update_task_status(taskId, status, isRejected, Remarks, priority, deadline, entryUserId) {
     const connection = await pool.getConnection();
     try {
       await connection.query(
-        "CALL sp_updateTaskStatus(?, ?, ?, ?, ?, @ErrorCode)",
-        [taskId, status, priority, deadline, entryUserId]
+        "CALL sp_updateTaskStatus(?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
+        [taskId, status, isRejected, Remarks, priority, deadline, entryUserId]
       );
       const [[{ ErrorCode }]] = await connection.query("SELECT @ErrorCode AS ErrorCode");
       return ErrorCode;

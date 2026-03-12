@@ -64,8 +64,8 @@ class TaskService {
     return rows;
   }
 
-  static async updateStatus(taskId, status, priority, deadline, entryUserId) {
-    const errorCode = await TaskModel.update_task_status(taskId, status, priority, deadline, entryUserId);
+  static async updateStatus(taskId, status, isRejected, Remarks, priority, deadline, entryUserId) {
+    const errorCode = await TaskModel.update_task_status(taskId, status, isRejected, Remarks, priority, deadline, entryUserId);
     return errorCode;
   }
 

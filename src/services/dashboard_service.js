@@ -2,6 +2,9 @@
 import DashboardModel from "../models/dashboard_model.js";
 
 class DashboardService {
+        static async getDeveloperWiseTeamProgressGraph(userId) {
+            return await DashboardModel.get_developer_wise_team_progress_graph(userId);
+        }
     static async getDashboardCount(userId) {
         return await DashboardModel.get_dashboard_count(userId);
     }
