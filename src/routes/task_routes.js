@@ -15,5 +15,7 @@ router.patch("/status", TaskController.updateStatus);
 router.get("/available-developers", TaskController.getAvailableDevelopers);
 // GET /api/tasks/my-tasks - fetch task details for the logged-in developer (JWT protected)
 router.get("/my-tasks", TaskController.getTaskDetailsByUserId);
+// DELETE /api/tasks - remove task (JWT protected)
+router.delete("/", TaskController.remove);
 
 export default router;

@@ -210,6 +210,35 @@ class TaskController {
       return response.error(res, err.message, 500);
     }
   }
+
+  static async remove(req, res) {
+    try {
+      const taskId = req.body.taskId ?? req.body.TaskID;
+      const deleteUserId = req.user?.UserID;
+
+      if (!taskId) {
+        return response.error(res, "missing parameter: taskId is required", 400);
+      }
+
+      if (!deleteUserId) {
+        return response.error(res, "invalid token: missing user information", 401);
+      }
+
+      const errorCode = await TaskService.remove(Number(taskId), Number(deleteUserId));
+
+      if (errorCode === 0) {
+        return response.success(res, null, "Task removed successfully", 200);
+      }
+
+      if (errorCode === 1) {
+        return response.error(res, "task not found", 404);
+      }
+
+      return response.error(res, "failed to remove task", 500);
+    } catch (err) {
+      return response.error(res, err.message, 500);
+    }
+  }
 }
 
 export default TaskController;
