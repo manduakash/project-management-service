@@ -81,6 +81,33 @@ class UserModel {
       connection.release();
     }
   }
+
+  static async get_all_user_profile_details(userId) {
+    const connection = await pool.getConnection();
+    try {
+      const [rows] = await connection.query(
+        "CALL sp_getAllUserProfileDetails(?)",
+        [userId || 0]
+      );
+      return rows[0] || [];
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async remove_user_details(userId, removalReason, entryUserId) {
+    const connection = await pool.getConnection();
+    try {
+      await connection.query(
+        "CALL sp_removeUserDetails(?, ?, ?, @ErrorCode)",
+        [userId || 0, removalReason || "", entryUserId || 0]
+      );
+      const [[{ ErrorCode }]] = await connection.query("SELECT @ErrorCode AS ErrorCode");
+      return ErrorCode;
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default UserModel;

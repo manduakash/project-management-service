@@ -102,7 +102,7 @@ class TaskController {
       const taskTypeId = src.taskTypeId ?? src.TaskTypeID ?? 0;
       const taskPriority = src.taskPriority ?? src.TaskPriority ?? 0;
 
-      const rows = await TaskService.get({
+      const data = await TaskService.get({
         taskId,
         assignedByUserId,
         assignedToUserId,
@@ -111,28 +111,6 @@ class TaskController {
         taskTypeId,
         taskPriority,
       });
-
-      // Each task has a single assigned user — return a flat response
-      const data = rows.map(r => ({
-        TaskID: r.TaskID,
-        StatusID: r.StatusID,
-        StatusName: r.StatusName,
-        TypeID: r.TypeID,
-        TypeName: r.TypeName,
-        ProjectID: r.ProjectID,
-        ProjectName: r.ProjectName,
-        PriorityID: r.PriorityID,
-        PriorityName: r.PriorityName,
-        AssignedByUserID: r.AssignedByUserID,
-        AssignedByUserFullName: r.AssignedByUserFullName,
-        AssignedToUserID: r.AssignedToUserID ?? null,
-        AssignedToUserFullName: r.AssignedToUserFullName ?? null,
-        Title: r.Title,
-        SubTitle: r.SubTitle,
-        Description: r.Description,
-        ProgressPercentage: r.ProgressPercentage,
-        Deadline: r.Deadline
-      }));
 
       return response.success(res, data, "tasks fetched", 200);
     } catch (err) {

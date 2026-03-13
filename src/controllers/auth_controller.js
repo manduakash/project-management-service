@@ -61,6 +61,46 @@ class AuthController {
       return response.error(res, error.message, 401);
     }
   }
+
+  static async bulkRegister(req, res) {
+    try {
+      const users = req.body;
+      if (!Array.isArray(users)) {
+        return response.error(res, "Body must be an array of users", 400);
+      }
+
+      const results = [];
+      const errors = [];
+
+      for (const userData of users) {
+        try {
+          const roleId = userData.roleId ?? userData.RoleID;
+          const phoneRaw = userData.phone ?? userData.contactNumber ?? userData.ContactNumber;
+          const phone = phoneRaw !== undefined && phoneRaw !== null ? String(phoneRaw).trim() : phoneRaw;
+
+          if (!userData.username || roleId === undefined || !userData.password || !phone) {
+            errors.push({ username: userData.username, error: "missing parameters" });
+            continue;
+          }
+
+          const normalized = {
+            ...userData,
+            roleId: roleId,
+            phone: phone
+          };
+
+          const result = await AuthService.register(normalized);
+          results.push({ username: userData.username, status: "success" });
+        } catch (err) {
+          errors.push({ username: userData.username, error: err.message });
+        }
+      }
+
+      return response.success(res, { results, errors }, "Bulk registration completed", 207);
+    } catch (error) {
+      return response.error(res, error.message, 500);
+    }
+  }
 }
 
 export default AuthController;

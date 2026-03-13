@@ -30,6 +30,16 @@ class UserService {
 
     return { message: "Profile updated successfully" };
   }
+
+  static async getAllUserProfileDetails(userId) {
+    const rows = await UserModel.get_all_user_profile_details(userId);
+    return rows;
+  }
+
+  static async removeUserDetails(userId, removalReason, entryUserId) {
+    const errorCode = await UserModel.remove_user_details(userId, removalReason, entryUserId);
+    return errorCode;
+  }
 }
 
 export default UserService;

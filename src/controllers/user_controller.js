@@ -39,7 +39,51 @@ class UserController {
                 designations: designationsArray
             });
 
-            return response.success(res, null, result.message, 200);
+            return response.success(res, result.message, 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getAllUserProfileDetails(req, res) {
+        try {
+            const userId = req.user?.UserID || req.user?.UserId || req.user?.ua_id;
+
+            if (!userId) {
+                return response.error(res, "User ID not found in token", 401);
+            }
+
+            const data = await UserService.getAllUserProfileDetails(userId);
+            return response.success(res, data, "User profile details fetched successfully", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async removeUserDetails(req, res) {
+        try {
+            const { userId, removalReason } = req.body;
+            const entryUserId = req.user?.UserID || req.user?.UserId || req.user?.ua_id;
+
+            if (!userId || !removalReason) {
+                return response.error(res, "userId and removalReason are required", 400);
+            }
+
+            if (!entryUserId) {
+                return response.error(res, "User ID not found in token", 401);
+            }
+
+            const errorCode = await UserService.removeUserDetails(userId, removalReason, entryUserId);
+
+            if (errorCode === 0) {
+                return response.success(res, null, "User removed successfully", 200);
+            }
+
+            if (errorCode === 1) {
+                return response.error(res, "User not found or already removed", 404);
+            }
+
+            return response.error(res, `Removal failed with error code: ${errorCode}`, 500);
         } catch (err) {
             return response.error(res, err.message, 500);
         }
