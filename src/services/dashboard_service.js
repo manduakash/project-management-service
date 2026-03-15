@@ -15,6 +15,14 @@ class DashboardService {
         static async getTeamMemberGraphDetails(userId) {
         return await DashboardModel.get_team_member_graph_details(userId);
     }
+
+    static async getDashboardWeeklyTaskProgressGraph(userId) {
+        return await DashboardModel.get_dashboard_weekly_task_progress_graph(userId);
+    }
+
+    static async getDeveloperDashboardDeadlineCrossedDetails(userId) {
+        return await DashboardModel.get_developer_dashboard_deadline_crossed_details(userId);
+    }
 }
 
 export default DashboardService;

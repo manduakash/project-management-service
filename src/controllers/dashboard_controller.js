@@ -77,6 +77,36 @@ class DashboardController {
             return response.error(res, err.message, 500);
         }
     }
+
+    static async getDashboardWeeklyTaskProgressGraph(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getDashboardWeeklyTaskProgressGraph(userId);
+            return response.success(res, rows, "weekly task progress graph fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getDeveloperDashboardDeadlineCrossedDetails(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getDeveloperDashboardDeadlineCrossedDetails(userId);
+            return response.success(res, rows, "deadline crossed tasks fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
 }
 
 export default DashboardController;

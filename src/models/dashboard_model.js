@@ -51,6 +51,32 @@ class DashboardModel {
             connection.release();
         }
     }
+
+    static async get_dashboard_weekly_task_progress_graph(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getDashboardWeeklyTaskProgressGraph(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_developer_dashboard_deadline_crossed_details(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getDeveloperDashboardDeadlineCrossedDetails(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default DashboardModel;
