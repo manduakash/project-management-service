@@ -19,6 +19,11 @@ router.get("/weekly-task-progress-graph", DashboardController.getDashboardWeekly
 // GET /api/lead/dashboard/deadline-crossed or /api/developer/dashboard/deadline-crossed (JWT protected)
 router.get("/deadline-crossed", DashboardController.getDeveloperDashboardDeadlineCrossedDetails);
 
+// GET /api/admin/dashboard/project-wise-progress-graph (JWT protected)
+router.get("/project-wise-progress-graph", DashboardController.getProjectWiseProgressForAdmin);
+// GET /api/admin/dashboard/team-lead-status (JWT protected)
+router.get("/team-lead-status", DashboardController.getTeamLeadStatusForAdmin);
+
 // ...existing code...
 
 export default router;

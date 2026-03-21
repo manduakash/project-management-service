@@ -77,6 +77,32 @@ class DashboardModel {
             connection.release();
         }
     }
+
+    static async get_project_wise_progress_for_admin(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getProjectWiseProgressForAdmin(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_team_lead_status_for_admin(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getTeamLeadStatusForAdmin(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default DashboardModel;

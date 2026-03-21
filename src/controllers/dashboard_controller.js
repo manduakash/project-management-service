@@ -107,6 +107,36 @@ class DashboardController {
             return response.error(res, err.message, 500);
         }
     }
+
+    static async getProjectWiseProgressForAdmin(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getProjectWiseProgressForAdmin(userId);
+            return response.success(res, rows, "project wise progress for admin fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getTeamLeadStatusForAdmin(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getTeamLeadStatusForAdmin(userId);
+            return response.success(res, rows, "team lead status for admin fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
 }
 
 export default DashboardController;

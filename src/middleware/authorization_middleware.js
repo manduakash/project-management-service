@@ -12,7 +12,11 @@ const authorize = (allowedRoles = []) => {
             }
 
             // Check if role is allowed
-            if (!allowedRoles.includes(req.user.RoleID)) {
+            // Convert to number for type-safe comparison (DB strings vs code numbers)
+            const userRole = Number(req.user.RoleID);
+            const rolesList = allowedRoles.map(Number);
+
+            if (!rolesList.includes(userRole)) {
                 return res.status(403).json({
                     success: false,
                     message: "Forbidden: You don't have access to this resource"

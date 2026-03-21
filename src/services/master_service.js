@@ -25,6 +25,11 @@ class MasterService {
         const rows = await MasterModel.get_all_task_types();
         return rows;
     }
+
+    static async getAllSeniorityLevels() {
+        const rows = await MasterModel.get_all_seniority_levels();
+        return rows;
+    }
 }
 
 export default MasterService;

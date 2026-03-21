@@ -46,6 +46,15 @@ class MasterController {
             return response.error(res, error.message, 500);
         }
     }
+
+    static async getAllSeniorityLevels(req, res) {
+        try {
+            const data = await MasterService.getAllSeniorityLevels();
+            return response.success(res, data, "seniority levels fetched", 200);
+        } catch (error) {
+            return response.error(res, error.message, 500);
+        }
+    }
 }
 
 export default MasterController;

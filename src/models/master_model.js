@@ -59,6 +59,18 @@ class MasterModel {
             connection.release();
         }
     }
+
+    static async get_all_seniority_levels() {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getAllSeniorityLevels()"
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default MasterModel;

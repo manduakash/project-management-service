@@ -13,5 +13,7 @@ router.get("/project-type", MasterController.getAllProjectTypes);
 router.get("/task-status", MasterController.getAllTaskStatuses);
 // GET /api/master/task-type - list active task types
 router.get("/task-type", MasterController.getAllTaskTypes);
+// GET /api/master/seniority-levels - list active seniority levels
+router.get("/seniority-levels", MasterController.getAllSeniorityLevels);
 
 export default router;

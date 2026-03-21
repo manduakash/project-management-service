@@ -23,6 +23,14 @@ class DashboardService {
     static async getDeveloperDashboardDeadlineCrossedDetails(userId) {
         return await DashboardModel.get_developer_dashboard_deadline_crossed_details(userId);
     }
+
+    static async getProjectWiseProgressForAdmin(userId) {
+        return await DashboardModel.get_project_wise_progress_for_admin(userId);
+    }
+
+    static async getTeamLeadStatusForAdmin(userId) {
+        return await DashboardModel.get_team_lead_status_for_admin(userId);
+    }
 }
 
 export default DashboardService;

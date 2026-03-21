@@ -13,7 +13,7 @@ import cors from "cors";
 
 const app = express();
 
-app.use(express.json({limit: "10mb"}));
+app.use(express.json({ limit: "10mb" }));
 
 app.use(cors({
     origin: "*"
@@ -27,6 +27,7 @@ app.use("/api/lead", authorize([2]));
 app.use("/api/developer", authorize([3]));
 app.use("/api/master", authorize([1, 2, 3]));
 
+app.use("/api/admin/dashboard", dashboardRoutes);
 app.use("/api/developer/dashboard", dashboardRoutes);
 app.use("/api/lead/dashboard", dashboardRoutes);
 app.use("/api/master", masterRoutes);
