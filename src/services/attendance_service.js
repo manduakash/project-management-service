@@ -8,6 +8,10 @@ class AttendanceService {
   static async getDailyAttendance(date) {
     return await AttendanceModel.getDailyAttendance(date);
   }
+
+  static async getMonthlyAttendanceReport(month, year) {
+    return await AttendanceModel.getMonthlyAttendanceReport(month, year);
+  }
 }
 
 export default AttendanceService;
