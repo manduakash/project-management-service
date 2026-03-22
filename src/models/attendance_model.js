@@ -4,16 +4,13 @@ class AttendanceModel {
     static async updateDailyAttendance(user_id, date, check_in, check_out, status_id, work_location_id, remarks, exec_user_id) {
         const connection = await pool.getConnection();
         try {
-            await connection.query(
-                "CALL sp_updateDailyAttendance(?,?,?,?,?,?,?,?, @ErrorCode)",
+            const response = await connection.query(
+                "CALL sp_updateDailyAttendance(?,?,?,?,?,?,?,?)",
                 [user_id, date, check_in, check_out, status_id, work_location_id, remarks, exec_user_id]
             );
 
-            const [[{ ErrorCode }]] = await connection.query(
-                "SELECT @ErrorCode AS ErrorCode"
-            );
 
-            return ErrorCode;
+            return response[0][0].success;
         } finally {
             connection.release();
         }
