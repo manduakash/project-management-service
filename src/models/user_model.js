@@ -2,10 +2,11 @@ import pool from "../config/db.js";
 
 class UserModel {
 
-  static async create_user(username, roleId, hashedPassword, email, phone, profileImage, fullName, gitUsername, gitPublicKey) {
+  static async create_user(username, roleId, organizationId, hashedPassword, email, phone, profileImage, fullName, gitUsername, gitPublicKey) {
     const connection = await pool.getConnection();
     try {
       roleId = roleId === undefined || roleId === null ? 0 : roleId;
+      organizationId = organizationId === undefined || organizationId === null ? 0 : organizationId;
       hashedPassword = hashedPassword || "";
       email = email || "";
       phone = phone || "";
@@ -17,6 +18,7 @@ class UserModel {
       const params = [
         username,
         roleId,
+        organizationId,
         hashedPassword,
         email,
         phone,
@@ -27,7 +29,7 @@ class UserModel {
       ];
 
       const [rows] = await connection.query(
-        "CALL sp_registerUser(?, ?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
+        "CALL sp_registerUser(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
         params
       );
 
@@ -52,7 +54,7 @@ class UserModel {
     return rows[0][0];
   }
 
-  static async update_user_profile(userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey, designations) {
+  static async update_user_profile(userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey, designations, biography) {
     const connection = await pool.getConnection();
     try {
       userId = userId || 0;
@@ -62,13 +64,14 @@ class UserModel {
       profilePicture = profilePicture || "";
       gitUsername = gitUsername || "";
       gitPublicKey = gitPublicKey || "";
+      biography = biography || "";
       // Ensure designations is a stringified JSON if it's an object/array
       const designationsJson = typeof designations === 'string' ? designations : JSON.stringify(designations || []);
 
-      const params = [userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey, designationsJson];
+      const params = [userId, email, contactNumber, fullName, profilePicture, gitUsername, gitPublicKey, designationsJson, biography];
 
       await connection.query(
-        "CALL sp_updateUserProfile(?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
+        "CALL sp_updateUserProfile(?, ?, ?, ?, ?, ?, ?, ?, ?, @ErrorCode)",
         params
       );
 

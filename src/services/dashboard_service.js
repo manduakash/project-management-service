@@ -31,6 +31,26 @@ class DashboardService {
     static async getTeamLeadStatusForAdmin(userId) {
         return await DashboardModel.get_team_lead_status_for_admin(userId);
     }
+
+    static async getResourceAllocationChart(userId) {
+        return await DashboardModel.get_resource_allocation_chart(userId);
+    }
+
+    static async getDeveloperOutputChart(userId) {
+        return await DashboardModel.get_developer_output_chart(userId);
+    }
+
+    static async getLeadershipPerformanceChart(userId) {
+        return await DashboardModel.get_leadership_performance_chart(userId);
+    }
+
+    static async getProjectTenureGraph(userId) {
+        return await DashboardModel.get_project_tenure_graph(userId);
+    }
+
+    static async getTeamLeadStatsForAdmin(userId) {
+        return await DashboardModel.get_team_lead_stats_for_admin(userId);
+    }
 }
 
 export default DashboardService;

@@ -89,6 +89,46 @@ class ProjectModel {
       connection.release();
     }
   }
+
+  static async assign_project_lead_by_admin(projectId, leadId, entryUserId) {
+    const connection = await pool.getConnection();
+    try {
+      const params = [projectId, leadId, entryUserId];
+
+      await connection.query(
+        "CALL sp_assignProjectLeadByAdmin(?, ?, ?, @ErrorCode)",
+        params
+      );
+
+      const [[{ ErrorCode }]] = await connection.query(
+        "SELECT @ErrorCode AS ErrorCode"
+      );
+
+      return ErrorCode;
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async deassign_team_lead_for_admin(projectId, leadId, entryUserId) {
+    const connection = await pool.getConnection();
+    try {
+      const params = [projectId, leadId, entryUserId];
+
+      await connection.query(
+        "CALL sp_deassignTeamLeadForAdmin(?, ?, ?, @ErrorCode)",
+        params
+      );
+
+      const [[{ ErrorCode }]] = await connection.query(
+        "SELECT @ErrorCode AS ErrorCode"
+      );
+
+      return ErrorCode;
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default ProjectModel;

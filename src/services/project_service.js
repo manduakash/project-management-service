@@ -46,6 +46,16 @@ class ProjectService {
     const errorCode = await ProjectModel.assign_user_to_project(userId, projectId);
     return errorCode;
   }
+
+  static async assignProjectLeadByAdmin(projectId, leadId, entryUserId) {
+    const errorCode = await ProjectModel.assign_project_lead_by_admin(projectId, leadId, entryUserId);
+    return errorCode;
+  }
+
+  static async deassignTeamLeadByAdmin(projectId, leadId, entryUserId) {
+    const errorCode = await ProjectModel.deassign_team_lead_for_admin(projectId, leadId, entryUserId);
+    return errorCode;
+  }
 }
 
 export default ProjectService;

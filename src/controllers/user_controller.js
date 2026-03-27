@@ -11,7 +11,8 @@ class UserController {
                 profilePicture,
                 gitUsername,
                 gitPublicKey,
-                designations
+                designations,
+                biography
             } = req.body;
 
             const userId = req.user?.UserID || req.user?.UserId || req.user?.ua_id;
@@ -36,7 +37,50 @@ class UserController {
                 profilePicture,
                 gitUsername,
                 gitPublicKey,
-                designations: designationsArray
+                designations: designationsArray,
+                biography: biography || ""
+            });
+
+            return response.success(res, result.message, 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async adminUpdateProfile(req, res) {
+        try {
+            const {
+                userId,
+                email,
+                contactNumber,
+                fullName,
+                profilePicture,
+                gitUsername,
+                gitPublicKey,
+                designations,
+                biography
+            } = req.body;
+
+            if (!userId) {
+                return response.error(res, "User ID (userId) is required in the request body", 400);
+            }
+
+            const designationsArray = Array.isArray(designations) ? designations : [];
+
+            if (!email || !fullName) {
+                return response.error(res, "Email and Full Name are required", 400);
+            }
+
+            const result = await UserService.updateProfile({
+                userId,
+                email,
+                contactNumber,
+                fullName,
+                profilePicture,
+                gitUsername,
+                gitPublicKey,
+                designations: designationsArray,
+                biography: biography || ""
             });
 
             return response.success(res, result.message, 200);

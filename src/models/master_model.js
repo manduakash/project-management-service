@@ -71,6 +71,47 @@ class MasterModel {
             connection.release();
         }
     }
+
+    static async get_all_organization_details() {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getAllOrganizationDetails()"
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_annual_holiday_list(userId, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getAnnualHolidayList(?,?)",
+                [userId || 0, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async save_annual_holiday_details(year, date, description, entryUserId) {
+        const connection = await pool.getConnection();
+        try {
+            await connection.query(
+                "CALL sp_saveAnnualHolidayDetails(?,?,?,?, @ErrorCode)",
+                [year, date, description, entryUserId]
+            );
+            const [[{ ErrorCode }]] = await connection.query(
+                "SELECT @ErrorCode AS ErrorCode"
+            );
+            return ErrorCode;
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default MasterModel;

@@ -11,12 +11,14 @@ class AuthController {
       const username = req.body.username;
       const password = req.body.password;
       const roleId = req.body.roleId ?? req.body.RoleID;
+      const organizationId = req.body.organizationId ?? req.body.OrganizationID;
       const phoneRaw = req.body.phone ?? req.body.contactNumber ?? req.body.ContactNumber;
       const phone = phoneRaw !== undefined && phoneRaw !== null ? String(phoneRaw).trim() : phoneRaw;
 
       const missing = [];
       if (!username) missing.push("username");
       if (roleId === undefined || roleId === null) missing.push("roleId");
+      if (!organizationId || organizationId === 0) missing.push("organizationId");
       if (!password) missing.push("password");
       if (!phone) missing.push("contactNumber");
 
@@ -35,6 +37,7 @@ class AuthController {
       const normalized = {
         ...req.body,
         roleId: roleId,
+        organizationId: organizationId,
         phone: phone
       };
 
@@ -75,10 +78,11 @@ class AuthController {
       for (const userData of users) {
         try {
           const roleId = userData.roleId ?? userData.RoleID;
+          const organizationId = userData.organizationId ?? userData.OrganizationID;
           const phoneRaw = userData.phone ?? userData.contactNumber ?? userData.ContactNumber;
           const phone = phoneRaw !== undefined && phoneRaw !== null ? String(phoneRaw).trim() : phoneRaw;
 
-          if (!userData.username || roleId === undefined || !userData.password || !phone) {
+          if (!userData.username || roleId === undefined || !organizationId || organizationId === 0 || !userData.password || !phone) {
             errors.push({ username: userData.username, error: "missing parameters" });
             continue;
           }
@@ -86,6 +90,7 @@ class AuthController {
           const normalized = {
             ...userData,
             roleId: roleId,
+            organizationId: organizationId,
             phone: phone
           };
 

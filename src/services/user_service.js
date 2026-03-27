@@ -11,6 +11,7 @@ class UserService {
       gitUsername,
       gitPublicKey,
       designations,
+      biography,
     } = userData;
 
     const errorCode = await UserModel.update_user_profile(
@@ -21,7 +22,8 @@ class UserService {
       profilePicture,
       gitUsername,
       gitPublicKey,
-      designations
+      designations,
+      biography
     );
 
     if (errorCode !== 0) {

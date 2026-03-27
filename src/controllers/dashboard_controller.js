@@ -137,6 +137,81 @@ class DashboardController {
             return response.error(res, err.message, 500);
         }
     }
+
+    static async getResourceAllocationChart(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getResourceAllocationChart(userId);
+            return response.success(res, rows, "resource allocation chart fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getDeveloperOutputChart(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getDeveloperOutputChart(userId);
+            return response.success(res, rows, "developer output chart fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getLeadershipPerformanceChart(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getLeadershipPerformanceChart(userId);
+            return response.success(res, rows, "leadership performance chart fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getProjectTenureGraph(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getProjectTenureGraph(userId);
+            return response.success(res, rows, "project tenure graph fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getTeamLeadStatsForAdmin(req, res) {
+        try {
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+
+            const rows = await DashboardService.getTeamLeadStatsForAdmin(userId);
+            return response.success(res, rows, "team lead stats for admin fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
 }
 
 export default DashboardController;

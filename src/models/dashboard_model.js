@@ -103,6 +103,71 @@ class DashboardModel {
             connection.release();
         }
     }
+
+    static async get_resource_allocation_chart(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getResourceAllocationChart(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_developer_output_chart(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getDeveloperOutputChart(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_leadership_performance_chart(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getLeadershipPerformanceChart(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_project_tenure_graph(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getProjectTenureGraph(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_team_lead_stats_for_admin(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getTeamLeadStatsForAdmin(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default DashboardModel;

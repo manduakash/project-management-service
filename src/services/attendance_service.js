@@ -12,6 +12,14 @@ class AttendanceService {
   static async getMonthlyAttendanceReport(month, year) {
     return await AttendanceModel.getMonthlyAttendanceReport(month, year);
   }
+
+  static async getEmployeeAttendanceReport(userId, fromDate, toDate) {
+    return await AttendanceModel.getEmployeeAttendanceReport(userId, fromDate, toDate);
+  }
+
+  static async getDailyAttendanceLogForAdmin(userId) {
+    return await AttendanceModel.getDailyAttendanceLogForAdmin(userId);
+  }
 }
 
 export default AttendanceService;

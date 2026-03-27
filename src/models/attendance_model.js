@@ -4,14 +4,16 @@ class AttendanceModel {
     static async updateDailyAttendance(user_id, date, check_in, check_out, status_id, work_location_id, remarks, exec_user_id) {
         const connection = await pool.getConnection();
         try {
-            const response = await connection.query(
-                "CALL sp_updateDailyAttendance(?,?,?,?,?,?,?,?)",
+            await connection.query(
+                "CALL sp_updateDailyAttendance(?,?,?,?,?,?,?,?, @ErrorCode)",
                 [user_id, date, check_in, check_out, status_id, work_location_id, remarks, exec_user_id]
             );
 
-            console.log(response[0][0][0]);
+            const [[{ ErrorCode }]] = await connection.query(
+                "SELECT @ErrorCode AS ErrorCode"
+            );
 
-            return response[0][0][0];
+            return ErrorCode;
         } finally {
             connection.release();
         }
@@ -36,6 +38,32 @@ class AttendanceModel {
             const [rows] = await connection.query(
                 "CALL sp_getMonthlyAttendanceReport(?,?)",
                 [month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getEmployeeAttendanceReport(userId, fromDate, toDate) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getEmployeeAttendenceReport(?,?,?)",
+                [userId, fromDate, toDate]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getDailyAttendanceLogForAdmin(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getDailyAttendenceLogForAdmin(?)",
+                [userId]
             );
             return rows[0] || [];
         } finally {

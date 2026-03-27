@@ -24,6 +24,19 @@ router.get("/project-wise-progress-graph", DashboardController.getProjectWisePro
 // GET /api/admin/dashboard/team-lead-status (JWT protected)
 router.get("/team-lead-status", DashboardController.getTeamLeadStatusForAdmin);
 
-// ...existing code...
+// GET /api/admin/dashboard/resource-allocation-chart (JWT protected)
+router.get("/resource-allocation-chart", DashboardController.getResourceAllocationChart);
+
+// GET /api/admin/dashboard/developer-output-chart (JWT protected)
+router.get("/developer-output-chart", DashboardController.getDeveloperOutputChart);
+
+// GET /api/admin/dashboard/leadership-performance-chart (JWT protected)
+router.get("/leadership-performance-chart", DashboardController.getLeadershipPerformanceChart);
+
+// GET /api/admin/dashboard/project-tenure-graph (JWT protected)
+router.get("/project-tenure-graph", DashboardController.getProjectTenureGraph);
+// GET /api/admin/dashboard/team-lead-stats (JWT protected)
+router.get("/team-lead-stats", DashboardController.getTeamLeadStatsForAdmin);
+
 
 export default router;

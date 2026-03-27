@@ -15,5 +15,9 @@ router.get("/task-status", MasterController.getAllTaskStatuses);
 router.get("/task-type", MasterController.getAllTaskTypes);
 // GET /api/master/seniority-levels - list active seniority levels
 router.get("/seniority-levels", MasterController.getAllSeniorityLevels);
+// GET /api/master/organization - list active organization details
+router.get("/organization", MasterController.getAllOrganizationDetails);
+// GET /api/master/annual-holiday-list - get holiday list for a year
+router.get("/annual-holiday-list", MasterController.getAnnualHolidayList);
 
 export default router;

@@ -30,6 +30,21 @@ class MasterService {
         const rows = await MasterModel.get_all_seniority_levels();
         return rows;
     }
+
+    static async getAllOrganizationDetails() {
+        const rows = await MasterModel.get_all_organization_details();
+        return rows;
+    }
+
+    static async getAnnualHolidayList(userId, year) {
+        const rows = await MasterModel.get_annual_holiday_list(userId, year);
+        return rows;
+    }
+
+    static async saveAnnualHolidayDetails(year, date, description, entryUserId) {
+        const errorCode = await MasterModel.save_annual_holiday_details(year, date, description, entryUserId);
+        return errorCode;
+    }
 }
 
 export default MasterService;

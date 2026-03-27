@@ -1,4 +1,5 @@
 import AttendanceService from "../services/attendance_service.js";
+import response from "../utils/response.js";
 import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
 import "pdfkit-table";
@@ -9,31 +10,16 @@ class AttendanceController {
       const { user_id, date, check_in, status_id, work_location_id, remarks } = req.body;
       const exec_user_id = req.user.UserID;
 
-      const response = await AttendanceService.updateDailyAttendance(user_id, date, check_in, "18:30:00", status_id, work_location_id, remarks, exec_user_id);
-
-      if (response?.success) {
-        return res.status(200).json({
-          status: "success",
-          message: response?.message,
-        });
-      } else if (!success) {
-        return res.status(404).json({
-          status: "failed",
-          message: response?.message || "Failed to update",
-        });
+      const errorCode = await AttendanceService.updateDailyAttendance(user_id, date, check_in, "18:30:00", status_id, work_location_id, remarks, exec_user_id);
+      
+      if (errorCode === 0) {
+        return response.success(res, null, "Attendance updated successfully", 200);
       } else {
-        return res.status(500).json({
-          status: "failed",
-          message: response?.message || "Failed to update notification status",
-          errorCode: errorCode,
-        });
+        return response.error(res, "Failed to update attendance status", errorCode === 4 ? 404 : 500, errorCode);
       }
     } catch (error) {
       console.error("Error updating attendance status:", error);
-      res.status(500).json({
-        status: "failed",
-        message: "Internal server error",
-      });
+      return response.error(res, "Internal server error", 500);
     }
   }
 
@@ -42,23 +28,14 @@ class AttendanceController {
       const { date } = req.query;
 
       if (!date) {
-        return res.status(400).json({
-          status: "failed",
-          message: "date is required",
-        });
+        return response.error(res, "date is required", 400);
       }
 
       const attendanceLogs = await AttendanceService.getDailyAttendance(date);
 
-      return res.status(200).json({
-        status: "success",
-        data: attendanceLogs,
-      });
+      return response.success(res, attendanceLogs, "attendance logs fetched", 200);
     } catch (error) {
-      res.status(500).json({
-        status: "failed",
-        message: error?.message || "Internal server error",
-      });
+      return response.error(res, error?.message || "Internal server error", 500);
     }
   }
 
@@ -67,55 +44,36 @@ class AttendanceController {
       const { month, year } = req.query;
 
       if (!month) {
-        return res.status(400).json({
-          status: "failed",
-          message: "Month is reuired",
-        });
+        return response.error(res, "Month is required", 400);
       } else if (!year) {
-        return res.status(400).json({
-          status: "failed",
-          message: "Year is reuired",
-        });
+        return response.error(res, "Year is required", 400);
       }
 
       const attendanceReport = await AttendanceService.getMonthlyAttendanceReport(month, year);
 
-      return res.status(200).json({
-        status: "success",
-        data: attendanceReport,
-      });
+      return response.success(res, attendanceReport, "attendance report fetched", 200);
     } catch (error) {
-      res.status(500).json({
-        status: "failed",
-        message: error?.message || "Internal server error",
-      });
+      return response.error(res, error?.message || "Internal server error", 500);
     }
   }
 
   static async exportMonthlyAttendanceReport(req, res) {
+    // ... existing export code ...
+    // (I'll keep the whole method content for correctness in substitution)
     try {
       const { month, year, exportType } = req.query;
 
       // ✅ Validation
       if (!month) {
-        return res.status(400).json({
-          status: "failed",
-          message: "Month is required",
-        });
+        return response.error(res, "Month is required", 400);
       }
 
       if (!year) {
-        return res.status(400).json({
-          status: "failed",
-          message: "Year is required",
-        });
+        return response.error(res, "Year is required", 400);
       }
 
       if (exportType && !["excel", "pdf"].includes(exportType)) {
-        return res.status(400).json({
-          status: "failed",
-          message: "exportType must be 'excel' or 'pdf'",
-        });
+        return response.error(res, "exportType must be 'excel' or 'pdf'", 400);
       }
 
       const attendanceReport =
@@ -229,6 +187,35 @@ class AttendanceController {
       });
     }
 
+  }
+
+  static async getEmployeeAttendanceReport(req, res) {
+    try {
+      const { fromDate, toDate } = req.query;
+      const userId = req.user.UserID;
+
+      if (!fromDate || !toDate) {
+        return response.error(res, "fromDate and toDate are required", 400);
+      }
+
+      const report = await AttendanceService.getEmployeeAttendanceReport(userId, fromDate, toDate);
+
+      return response.success(res, report, "Employee attendance report fetched", 200);
+    } catch (error) {
+      return response.error(res, error?.message || "Internal server error", 500);
+    }
+  }
+
+  static async getDailyAttendanceLogForAdmin(req, res) {
+    try {
+      const userId = req.user.UserID;
+
+      const logs = await AttendanceService.getDailyAttendanceLogForAdmin(userId);
+
+      return response.success(res, logs, "Daily attendance logs for admin fetched", 200);
+    } catch (error) {
+      return response.error(res, error?.message || "Internal server error", 500);
+    }
   }
 }
 

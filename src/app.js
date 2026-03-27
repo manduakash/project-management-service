@@ -8,6 +8,7 @@ import dashboardRoutes from "./routes/dashboard_routes.js";
 import masterRoutes from "./routes/master_routes.js";
 import notificationRoutes from "./routes/notification_routes.js";
 import attendanceRoutes from "./routes/attendance_routes.js";
+import adminRoutes from "./routes/admin_routes.js";
 import authMiddleware from "./middleware/auth_middleware.js";
 import authorize from "./middleware/authorization_middleware.js";
 import cors from "cors";
@@ -26,9 +27,10 @@ app.use("/api", authMiddleware);
 app.use("/api/admin", authorize([1]));
 app.use("/api/lead", authorize([2]));
 app.use("/api/developer", authorize([3]));
-app.use("/api/master", authorize([1, 2, 3]));
+app.use("/api/master", authorize([1, 2, 3])); // kept if future roles need restriction
 
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/developer/dashboard", dashboardRoutes);
 app.use("/api/lead/dashboard", dashboardRoutes);
 app.use("/api/master", masterRoutes);

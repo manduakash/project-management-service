@@ -114,6 +114,62 @@ class ProjectController {
       return response.error(res, error.message, 500);
     }
   }
+
+  static async assignProjectLeadByAdmin(req, res) {
+    try {
+      const projectId = Number(req.body.projectId ?? req.body.ProjectID);
+      const leadId = Number(req.body.leadId ?? req.body.LeadID);
+      const entryUserId = req.user?.UserID ?? req.user?.UserId ?? req.user?.user_id;
+
+      if (!projectId || !leadId) {
+        return response.error(res, "missing parameters: projectId and leadId are required", 400);
+      }
+
+      const errorCode = await ProjectService.assignProjectLeadByAdmin(projectId, leadId, entryUserId);
+
+      if (errorCode === 0) {
+        return response.success(res, null, "Project lead assigned successfully", 200);
+      } else if (errorCode === 2) {
+        return response.error(res, "Project lead already assigned", 400);
+      } else if (errorCode === 3) {
+        return response.error(res, "User is unauthorized", 403);
+      } else if (errorCode === 4) {
+        return response.error(res, "Invalid projectId or leadId", 400);
+      } else {
+        return response.error(res, "Failed to assign project lead", 500);
+      }
+    } catch (error) {
+      return response.error(res, error.message, 500);
+    }
+  }
+
+  static async deassignTeamLeadByAdmin(req, res) {
+    try {
+      const projectId = Number(req.body.projectId ?? req.body.ProjectID);
+      const leadId = Number(req.body.leadId ?? req.body.LeadID);
+      const entryUserId = req.user?.UserID ?? req.user?.UserId ?? req.user?.user_id;
+
+      if (!projectId || !leadId) {
+        return response.error(res, "missing parameters: projectId and leadId are required", 400);
+      }
+
+      const errorCode = await ProjectService.deassignTeamLeadByAdmin(projectId, leadId, entryUserId);
+
+      if (errorCode === 0) {
+        return response.success(res, null, "Team lead deassigned successfully", 200);
+      } else if (errorCode === 2) {
+        return response.error(res, "Cannot deassign the user who created the project", 400);
+      } else if (errorCode === 3) {
+        return response.error(res, "User is unauthorized: only admins can perform this action", 403);
+      } else if (errorCode === 4) {
+        return response.error(res, "Invalid projectId or leadId", 400);
+      } else {
+        return response.error(res, "Failed to deassign team lead", 500);
+      }
+    } catch (error) {
+      return response.error(res, error.message, 500);
+    }
+  }
 }
 
 export default ProjectController;

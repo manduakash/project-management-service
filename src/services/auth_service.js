@@ -12,6 +12,8 @@ class AuthService {
       phone = "",
       roleId,
       RoleID,
+      organizationId,
+      OrganizationID,
       profileImage = "",
       fullName = "",
       gitUsername = "",
@@ -19,6 +21,12 @@ class AuthService {
     } = userData;
 
     const resolvedRoleId = roleId ?? RoleID;
+    const resolvedOrganizationId = organizationId ?? OrganizationID;
+
+    // Validate organizationId
+    if (!resolvedOrganizationId || resolvedOrganizationId === 0) {
+      throw new Error("organizationId is mandatory and cannot be zero");
+    }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,6 +34,7 @@ class AuthService {
     const errorCode = await UserModel.create_user(
       username,
       resolvedRoleId,
+      resolvedOrganizationId,
       hashedPassword,
       email || "",
       phone || "",
