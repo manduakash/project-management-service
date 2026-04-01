@@ -3,18 +3,30 @@ import DashboardService from "../services/dashboard_service.js";
 import response from "../utils/response.js";
 
 class DashboardController {
-        static async getDeveloperWiseTeamProgressGraph(req, res) {
-            try {
-                const userId = req.user?.UserID;
-                if (!userId) {
-                    return response.error(res, "invalid token: missing user information", 401);
-                }
-                const rows = await DashboardService.getDeveloperWiseTeamProgressGraph(userId);
-                return response.success(res, rows, "developer wise team progress graph fetched", 200);
-            } catch (err) {
-                return response.error(res, err.message, 500);
+    static async getWeeklyAttendanceTrend(req, res) {
+        try {
+            const userId = req.user?.UserID;
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
             }
+            const rows = await DashboardService.getWeeklyAttendanceTrend(userId);
+            return response.success(res, rows, "weekly attendance trend fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
         }
+    }
+    static async getDeveloperWiseTeamProgressGraph(req, res) {
+        try {
+            const userId = req.user?.UserID;
+            if (!userId) {
+                return response.error(res, "invalid token: missing user information", 401);
+            }
+            const rows = await DashboardService.getDeveloperWiseTeamProgressGraph(userId);
+            return response.success(res, rows, "developer wise team progress graph fetched", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
     static async getCount(req, res) {
         try {
             const userId = req.user?.UserID
@@ -65,7 +77,7 @@ class DashboardController {
             return response.error(res, err.message, 500);
         }
     }
-        static async getTeamMemberGraphDetails(req, res) {
+    static async getTeamMemberGraphDetails(req, res) {
         try {
             const userId = req.user?.UserID;
             if (!userId) {

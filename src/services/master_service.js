@@ -45,6 +45,16 @@ class MasterService {
         const errorCode = await MasterModel.save_annual_holiday_details(year, date, description, entryUserId);
         return errorCode;
     }
+
+    static async getAllLeaveApplicationTypes() {
+        const rows = await MasterModel.get_all_leave_application_types();
+        return rows;
+    }
+
+    static async getAllLeaveApplicationStatuses() {
+        const rows = await MasterModel.get_all_leave_application_statuses();
+        return rows;
+    }
 }
 
 export default MasterService;

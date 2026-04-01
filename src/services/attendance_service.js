@@ -20,6 +20,20 @@ class AttendanceService {
   static async getDailyAttendanceLogForAdmin(userId) {
     return await AttendanceModel.getDailyAttendanceLogForAdmin(userId);
   }
+
+  static async getTodayAttendanceEmployeeList(userId) {
+    return await AttendanceModel.getTodayAttendanceEmployeeList(userId);
+  }
+
+  static async saveLeaveApplication(leaveData) {
+    const { leaveTypeId, leaveFrom, leaveTo, description, entryUserId } = leaveData;
+    return await AttendanceModel.save_leave_application(leaveTypeId, leaveFrom, leaveTo, description, entryUserId);
+  }
+
+  static async mergeLeaveDetails(leaveData) {
+    const { leaveTypeId, leaveFrom, leaveTo, description, entryUserId } = leaveData;
+    return await AttendanceModel.merge_leave_details(leaveTypeId, leaveFrom, leaveTo, description, entryUserId);
+  }
 }
 
 export default AttendanceService;

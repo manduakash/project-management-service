@@ -112,6 +112,30 @@ class MasterModel {
             connection.release();
         }
     }
+
+    static async get_all_leave_application_types() {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getAllLeaveApplicationTypeDetails()"
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async get_all_leave_application_statuses() {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getAllLeaveApplicationStatusDetails()"
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default MasterModel;

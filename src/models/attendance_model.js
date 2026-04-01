@@ -70,6 +70,55 @@ class AttendanceModel {
             connection.release();
         }
     }
+
+    static async getTodayAttendanceEmployeeList(userId) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getTodayAttendenceEmployeeList(?)",
+                [userId]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async save_leave_application(leaveTypeId, leaveFrom, leaveTo, description, entryUserId) {
+        const connection = await pool.getConnection();
+        try {
+            await connection.query(
+                "CALL sp_saveUserLeaveApplication(?, ?, ?, ?, ?, @ErrorCode)",
+                [leaveTypeId, leaveFrom, leaveTo, description, entryUserId]
+            );
+
+            const [[{ ErrorCode }]] = await connection.query(
+                "SELECT @ErrorCode AS ErrorCode"
+            );
+
+            return ErrorCode;
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async merge_leave_details(leaveTypeId, leaveFrom, leaveTo, description, entryUserId) {
+        const connection = await pool.getConnection();
+        try {
+            await connection.query(
+                "CALL sp_mergeExistingLeaveDetails(?, ?, ?, ?, ?, @ErrorCode)",
+                [leaveTypeId, leaveFrom, leaveTo, description, entryUserId]
+            );
+
+            const [[{ ErrorCode }]] = await connection.query(
+                "SELECT @ErrorCode AS ErrorCode"
+            );
+
+            return ErrorCode;
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default AttendanceModel;

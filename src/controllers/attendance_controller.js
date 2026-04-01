@@ -7,11 +7,11 @@ import "pdfkit-table";
 class AttendanceController {
   static async updateDailyAttendance(req, res) {
     try {
-      const { user_id, date, check_in, status_id, work_location_id, remarks } = req.body;
+      const { user_id, date, check_in, check_out, status_id, work_location_id, remarks } = req.body;
       const exec_user_id = req.user.UserID;
 
-      const errorCode = await AttendanceService.updateDailyAttendance(user_id, date, check_in, "18:30:00", status_id, work_location_id, remarks, exec_user_id);
-      
+      const errorCode = await AttendanceService.updateDailyAttendance(user_id, date, check_in, check_out, status_id, work_location_id, remarks, exec_user_id);
+
       if (errorCode === 0) {
         return response.success(res, null, "Attendance updated successfully", 200);
       } else {
@@ -215,6 +215,76 @@ class AttendanceController {
       return response.success(res, logs, "Daily attendance logs for admin fetched", 200);
     } catch (error) {
       return response.error(res, error?.message || "Internal server error", 500);
+    }
+  }
+
+  static async getTodayAttendanceEmployeeList(req, res) {
+    try {
+      const userId = req.user.UserID;
+
+      const list = await AttendanceService.getTodayAttendanceEmployeeList(userId);
+
+      return response.success(res, list, "Today's attendance employee list fetched", 200);
+    } catch (error) {
+      return response.error(res, error?.message || "Internal server error", 500);
+    }
+  }
+
+  static async saveLeaveApplication(req, res) {
+    try {
+      const { leaveTypeId, leaveFrom, leaveTo, description } = req.body;
+      const entryUserId = req.user.UserID;
+
+      if (!leaveTypeId || !leaveFrom || !leaveTo || !description) {
+        return response.error(res, "Missing parameters: leaveTypeId, leaveFrom, leaveTo, and description are required", 400);
+      }
+
+      const errorCode = await AttendanceService.saveLeaveApplication({
+        leaveTypeId,
+        leaveFrom,
+        leaveTo,
+        description,
+        entryUserId,
+      });
+
+      if (errorCode === 0) {
+        return response.success(res, null, "Leave application submitted successfully", 200);
+      } else if (errorCode === 2) {
+        return response.error(res, "Leave already applied for these dates", 400, errorCode);
+      } else {
+        return response.error(res, "Failed to submit leave application", 500, errorCode);
+      }
+    } catch (error) {
+      console.error("Error saving leave application:", error);
+      return response.error(res, "Internal server error", 500);
+    }
+  }
+
+  static async mergeLeaveDetails(req, res) {
+    try {
+      const { leaveTypeId, leaveFrom, leaveTo, description } = req.body;
+      const entryUserId = req.user.UserID;
+
+      if (!leaveTypeId || !leaveFrom || !leaveTo || !description) {
+        return response.error(res, "Missing parameters: leaveTypeId, leaveFrom, leaveTo, and description are required", 400);
+      }
+
+      const errorCode = await AttendanceService.mergeLeaveDetails({
+        leaveTypeId,
+        leaveFrom,
+        leaveTo,
+        description,
+        entryUserId,
+      });
+
+      if (errorCode === 0) {
+        return response.success(res, null, "Leave details merged successfully", 200);
+      } else {
+        return response.error(res, "Failed to merge leave details", 500, errorCode);
+      }
+    } catch (error) {
+      console.error("Error merging leave details:", error);
+      return response.error(res, "Internal server error", 500);
     }
   }
 }

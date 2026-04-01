@@ -3,6 +3,9 @@ import DashboardController from "../controllers/dashboard_controller.js";
 
 const router = express.Router();
 
+// GET /api/developer/dashboard (JWT protected)
+router.get("/", DashboardController.get);
+
 // GET /api/developer/dashboard/count (JWT protected)
 router.get("/count", DashboardController.getCount);
 
@@ -38,5 +41,7 @@ router.get("/project-tenure-graph", DashboardController.getProjectTenureGraph);
 // GET /api/admin/dashboard/team-lead-stats (JWT protected)
 router.get("/team-lead-stats", DashboardController.getTeamLeadStatsForAdmin);
 
+// GET /api/executive/weekly-attendance-trend (JWT protected)
+router.get("/weekly-attendance-trend", DashboardController.getWeeklyAttendanceTrend);
 
 export default router;

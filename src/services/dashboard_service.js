@@ -2,9 +2,9 @@
 import DashboardModel from "../models/dashboard_model.js";
 
 class DashboardService {
-        static async getDeveloperWiseTeamProgressGraph(userId) {
-            return await DashboardModel.get_developer_wise_team_progress_graph(userId);
-        }
+    static async getDeveloperWiseTeamProgressGraph(userId) {
+        return await DashboardModel.get_developer_wise_team_progress_graph(userId);
+    }
     static async getDashboardCount(userId) {
         return await DashboardModel.get_dashboard_count(userId);
     }
@@ -12,7 +12,7 @@ class DashboardService {
         const rows = await DashboardModel.get_dashboard_details(userId, fromDate, toDate);
         return rows;
     }
-        static async getTeamMemberGraphDetails(userId) {
+    static async getTeamMemberGraphDetails(userId) {
         return await DashboardModel.get_team_member_graph_details(userId);
     }
 
@@ -50,6 +50,9 @@ class DashboardService {
 
     static async getTeamLeadStatsForAdmin(userId) {
         return await DashboardModel.get_team_lead_stats_for_admin(userId);
+    }
+    static async getWeeklyAttendanceTrend(userId) {
+        return await DashboardModel.get_weekly_attendance_trend(userId);
     }
 }
 

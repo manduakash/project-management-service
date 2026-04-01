@@ -19,5 +19,9 @@ router.get("/seniority-levels", MasterController.getAllSeniorityLevels);
 router.get("/organization", MasterController.getAllOrganizationDetails);
 // GET /api/master/annual-holiday-list - get holiday list for a year
 router.get("/annual-holiday-list", MasterController.getAnnualHolidayList);
+// GET /api/master/leave-application-types - list active leave application types
+router.get("/leave-application-types", MasterController.getAllLeaveApplicationTypes);
+// GET /api/master/leave-application-statuses - list active leave application statuses
+router.get("/leave-application-status", MasterController.getAllLeaveApplicationStatuses);
 
 export default router;

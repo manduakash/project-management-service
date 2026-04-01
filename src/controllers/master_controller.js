@@ -103,6 +103,24 @@ class MasterController {
             return response.error(res, error.message, 500);
         }
     }
+
+    static async getAllLeaveApplicationTypes(req, res) {
+        try {
+            const data = await MasterService.getAllLeaveApplicationTypes();
+            return response.success(res, data, "leave application types fetched", 200);
+        } catch (error) {
+            return response.error(res, error.message, 500);
+        }
+    }
+
+    static async getAllLeaveApplicationStatuses(req, res) {
+        try {
+            const data = await MasterService.getAllLeaveApplicationStatuses();
+            return response.success(res, data, "leave application statuses fetched", 200);
+        } catch (error) {
+            return response.error(res, error.message, 500);
+        }
+    }
 }
 
 export default MasterController;

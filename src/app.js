@@ -27,7 +27,9 @@ app.use("/api", authMiddleware);
 app.use("/api/admin", authorize([1]));
 app.use("/api/lead", authorize([2]));
 app.use("/api/developer", authorize([3]));
+app.use("/api/executive", authorize([5]));
 app.use("/api/master", authorize([1, 2, 3])); // kept if future roles need restriction
+
 
 app.use("/api/admin/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
@@ -44,7 +46,7 @@ app.use("/api/attendance", attendanceRoutes);
 
 // app.use("/api/admin", authorize(["admin"]), adminRoutes);
 // app.use("/api/admin", authorize(["admin"]), adminRoutes);
-
+app.use("/api/executive/dashboard", dashboardRoutes);
 
 
 export default app;
