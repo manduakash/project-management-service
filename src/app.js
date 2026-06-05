@@ -24,12 +24,12 @@ app.use(cors({
 
 app.use("/api/auth", authRoutes);
 
-// app.use("/api", authMiddleware);
-// app.use("/api/admin", authorize([1]));
-// app.use("/api/lead", authorize([2]));
-// app.use("/api/developer", authorize([3]));
-// app.use("/api/executive", authorize([5]));
-// app.use("/api/master", authorize([1, 2, 3, 4, 5])); // kept if future roles need restriction
+app.use("/api", authMiddleware);
+app.use("/api/admin", authorize([1]));
+app.use("/api/lead", authorize([2]));
+app.use("/api/developer", authorize([3]));
+app.use("/api/executive", authorize([1, 2, 3, 4, 5]));
+app.use("/api/master", authorize([1, 2, 3, 4, 5])); // kept if future roles need restriction
 
 
 app.use("/api/admin/dashboard", dashboardRoutes);
