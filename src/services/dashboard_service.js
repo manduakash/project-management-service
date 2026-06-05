@@ -54,6 +54,59 @@ class DashboardService {
     static async getWeeklyAttendanceTrend(userId) {
         return await DashboardModel.get_weekly_attendance_trend(userId);
     }
+
+    // Parse & validate month/year from query params
+    static #parseFilters(query) {
+        const now = new Date();
+        const month = parseInt(query.month ?? now.getMonth() + 1);  // 0 = all months
+        const year = parseInt(query.year ?? now.getFullYear());
+        const user_id = parseInt(query.user_id ?? 0);                   // 0 = all employees
+
+        if (isNaN(month) || month < 0 || month > 12)
+            throw new Error("Invalid month. Use 1–12 or 0 for all months.");
+
+        if (isNaN(year) || year < 2000 || year > 2100)
+            throw new Error("Invalid year.");
+
+        if (isNaN(user_id) || user_id < 0)
+            throw new Error("Invalid user_id.");
+
+        return { user_id, month, year };
+    }
+
+    static async getDashboardSummary(query) {
+        const { user_id, month, year } = this.#parseFilters(query);
+        return await DashboardModel.getDashboardSummary(user_id, month, year);
+    }
+
+    static async getAttendanceReport(query) {
+        const { user_id, month, year } = this.#parseFilters(query);
+        return await DashboardModel.getAttendanceReport(user_id, month, year);
+    }
+
+    static async getDiscipline(query) {
+        const { user_id, month, year } = this.#parseFilters(query);
+        return await DashboardModel.getDiscipline(user_id, month, year);
+    }
+
+    static async getSalary(query) {
+        const { user_id, month, year } = this.#parseFilters(query);
+        return await DashboardModel.getSalary(user_id, month, year);
+    }
+
+    static async getLeaves(query) {
+        const { user_id, month, year } = this.#parseFilters(query);
+        return await DashboardModel.getLeaves(user_id, month, year);
+    }
+
+    static async getWorking(query) {
+        const { user_id, month, year } = this.#parseFilters(query);
+        return await DashboardModel.getWorking(user_id, month, year);
+    }
+
+    static async getAllEmployees() {
+        return await DashboardModel.getAllEmployees();
+    }
 }
 
 export default DashboardService;

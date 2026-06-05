@@ -47,6 +47,7 @@ app.use("/api/attendance", attendanceRoutes);
 // app.use("/api/admin", authorize(["admin"]), adminRoutes);
 // app.use("/api/admin", authorize(["admin"]), adminRoutes);
 app.use("/api/executive/dashboard", dashboardRoutes);
+app.use("/api/accountant/dashboard", dashboardRoutes);
 
 
 export default app;

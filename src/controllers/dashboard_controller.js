@@ -224,6 +224,95 @@ class DashboardController {
             return response.error(res, err.message, 500);
         }
     }
+
+    /**
+    * GET /api/accountant/dashboard/summary
+    * Query: ?user_id=3&month=5&year=2026
+    *        user_id=0  → all employees
+    *        month=0  → all months of the year
+    */
+    static async getDashboardSummary(req, res) {
+        try {
+            const data = await DashboardService.getDashboardSummary(req.query);
+            return response.success(res, data, "Dashboard summary fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    /**
+     * GET /api/accountant/dashboard/attendance-report
+     * Query: ?user_id=3&month=5&year=2026
+     */
+    static async getAttendanceReport(req, res) {
+        try {
+            const data = await DashboardService.getAttendanceReport(req.query);
+            return response.success(res, data, "Attendance report fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    /**
+     * GET /api/accountant/dashboard/discipline
+     * Query: ?user_id=3&month=5&year=2026
+     */
+    static async getDiscipline(req, res) {
+        try {
+            const data = await DashboardService.getDiscipline(req.query);
+            return response.success(res, data, "Discipline data fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    /**
+     * GET /api/accountant/dashboard/salary
+     * Query: ?user_id=3&month=5&year=2026
+     */
+    static async getSalary(req, res) {
+        try {
+            const data = await DashboardService.getSalary(req.query);
+            return response.success(res, data, "Salary data fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    /**
+     * GET /api/accountant/dashboard/leaves
+     * Query: ?user_id=3&month=5&year=2026
+     */
+    static async getLeaves(req, res) {
+        try {
+            const data = await DashboardService.getLeaves(req.query);
+            return response.success(res, data, "Leaves data fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    /**
+     * GET /api/accountant/dashboard/working
+     * Query: ?user_id=3&month=5&year=2026
+     */
+    static async getWorking(req, res) {
+        try {
+            const data = await DashboardService.getWorking(req.query);
+            return response.success(res, data, "Working data fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async getAllEmployees(req, res) {
+        try {
+            const data = await DashboardService.getAllEmployees();
+            return response.success(res, data, "Employees fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
 }
 
 export default DashboardController;

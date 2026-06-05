@@ -1,5 +1,6 @@
 import express from "express";
 import UserController from "../controllers/user_controller.js";
+import DashboardController from "../controllers/dashboard_controller.js";
 
 const router = express.Router();
 
@@ -9,5 +10,7 @@ router.put("/profile", UserController.updateProfile);
 router.get("/profile-details", UserController.getAllUserProfileDetails);
 // DELETE /api/users/remove-user - remove user details (JWT protected)
 router.delete("/remove-user", UserController.removeUserDetails);
+
+router.get("/employees", DashboardController.getAllEmployees);
 
 export default router;
