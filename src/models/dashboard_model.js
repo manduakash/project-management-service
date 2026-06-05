@@ -180,6 +180,94 @@ class DashboardModel {
             connection.release();
         }
     }
+
+    static async getDashboardSummary(user_id, month, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_dashboard_summary(?, ?, ?)",
+                [user_id, month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getAttendanceReport(user_id, month, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_dashboard_attendance_report(?, ?, ?)",
+                [user_id, month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getDiscipline(user_id, month, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_dashboard_discipline(?, ?, ?)",
+                [user_id, month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getSalary(user_id, month, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_dashboard_salary(?, ?, ?)",
+                [user_id, month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getLeaves(user_id, month, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_dashboard_leaves(?, ?, ?)",
+                [user_id, month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getWorking(user_id, month, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_dashboard_working(?, ?, ?)",
+                [user_id, month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async getAllEmployees() {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query("CALL sp_get_all_employees()");
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 export default DashboardModel;

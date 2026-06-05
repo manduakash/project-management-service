@@ -44,4 +44,22 @@ router.get("/team-lead-stats", DashboardController.getTeamLeadStatsForAdmin);
 // GET /api/executive/weekly-attendance-trend (JWT protected)
 router.get("/weekly-attendance-trend", DashboardController.getWeeklyAttendanceTrend);
 
+// Top summary cards (present, leave, weeks off, holidays, half days, absent, casual/privileged/sick leave)
+router.get("/summary",           DashboardController.getDashboardSummary);
+ 
+// Attendance bar chart (present, absent, half day, privileged leave)
+router.get("/attendance-report", DashboardController.getAttendanceReport);
+ 
+// Discipline donut chart (permissible vs breach)
+router.get("/discipline",        DashboardController.getDiscipline);
+ 
+// Salary card (gross, deductions, net)
+router.get("/salary",            DashboardController.getSalary);
+ 
+// Leaves donut chart (casual, privileged, sick, half day)
+router.get("/leaves",            DashboardController.getLeaves);
+ 
+// Working stacked bar chart
+router.get("/working",           DashboardController.getWorking);
+
 export default router;
