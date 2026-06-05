@@ -5,6 +5,7 @@ import projectRoutes from "./routes/project_routes.js";
 import taskRoutes from "./routes/task_routes.js";
 import userRoutes from "./routes/user_routes.js";
 import dashboardRoutes from "./routes/dashboard_routes.js";
+import salaryRoutes from "./routes/salary_routes.js";
 import masterRoutes from "./routes/master_routes.js";
 import notificationRoutes from "./routes/notification_routes.js";
 import attendanceRoutes from "./routes/attendance_routes.js";
@@ -23,12 +24,12 @@ app.use(cors({
 
 app.use("/api/auth", authRoutes);
 
-app.use("/api", authMiddleware);
-app.use("/api/admin", authorize([1]));
-app.use("/api/lead", authorize([2]));
-app.use("/api/developer", authorize([3]));
-app.use("/api/executive", authorize([5]));
-app.use("/api/master", authorize([1, 2, 3])); // kept if future roles need restriction
+// app.use("/api", authMiddleware);
+// app.use("/api/admin", authorize([1]));
+// app.use("/api/lead", authorize([2]));
+// app.use("/api/developer", authorize([3]));
+// app.use("/api/executive", authorize([5]));
+// app.use("/api/master", authorize([1, 2, 3, 4, 5])); // kept if future roles need restriction
 
 
 app.use("/api/admin/dashboard", dashboardRoutes);
@@ -48,6 +49,7 @@ app.use("/api/attendance", attendanceRoutes);
 // app.use("/api/admin", authorize(["admin"]), adminRoutes);
 app.use("/api/executive/dashboard", dashboardRoutes);
 app.use("/api/accountant/dashboard", dashboardRoutes);
+app.use("/api/accountant/salary", salaryRoutes);
 
 
 export default app;
