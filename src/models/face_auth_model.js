@@ -2,6 +2,23 @@ import pool from "../config/db.js";
 
 class FaceAuthModel {
 
+    // Add to FaceAuthModel
+
+    static async logLogin({ ua_id, latitude, longitude, match_score, ip_address, device_info, status, failed_reason }) {
+        const connection = await pool.getConnection();
+        try {
+            await connection.query(`
+            INSERT INTO tbl_face_login_logs
+              (fll_ua_id, fll_latitude, fll_longitude, fll_match_score,
+               fll_ip_address, fll_device_info, fll_status, fll_failed_reason)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [ua_id, latitude ?? null, longitude ?? null, match_score ?? null,
+                ip_address ?? null, device_info ?? null, status, failed_reason ?? null]);
+        } finally {
+            connection.release();
+        }
+    }
+
     /**
      * Fetch all active users with their face embeddings
      * Used for cosine similarity matching
