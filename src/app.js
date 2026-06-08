@@ -26,6 +26,8 @@ app.use(cors({
 }));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
+app.use("/api/users", userRoutes);
 
 app.use("/api", authMiddleware);
 app.use("/api/admin", authorize([1]));
@@ -44,7 +46,6 @@ app.use("/api/master", masterRoutes);
 app.use("/api/designations", designationRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
-app.use("/api/users", userRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 
@@ -55,7 +56,6 @@ app.use("/api/accountant/dashboard", dashboardRoutes);
 app.use("/api/accountant/salary", salaryRoutes);
 app.use("/api/accountant/weekoffs", weekoffRoutes);
 app.use("/api/accountant/holidays", holidayRoutes);
-app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
 
 
 export default app;
