@@ -95,7 +95,16 @@ class FaceAuthService {
         if (!fullUser) throw new Error("User account not found.");
 
         // ── Success: log ──
-        await FaceAuthModel.logLogin({
+        // await FaceAuthModel.logLogin({
+        //     ua_id: fullUser.ua_id,
+        //     latitude, longitude,
+        //     match_score: parseFloat(bestScore.toFixed(4)),
+        //     ip_address, device_info,
+        //     status: "success",
+        //     failed_reason: null
+        // });
+
+        const logResult = await FaceAuthModel.upsertLoginLog({
             ua_id: fullUser.ua_id,
             latitude, longitude,
             match_score: parseFloat(bestScore.toFixed(4)),
@@ -115,6 +124,7 @@ class FaceAuthService {
 
         return {
             token,
+            action: logResult.action,   // 'checkin' | 'checkout' | 'already_checkedin'
             match_score: parseFloat(bestScore.toFixed(4)),
             user: {
                 email: fullUser.ua_email,
@@ -127,9 +137,10 @@ class FaceAuthService {
                 role: fullUser.role_name,
             }
         };
+
     }
 
-    
+
 
 }
 
