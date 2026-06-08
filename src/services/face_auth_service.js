@@ -3,7 +3,7 @@ import FormData from "form-data";
 import jwt from "jsonwebtoken";
 import FaceAuthModel from "../models/face_auth_model.js";
 
-const PYTHON_URL       = process.env.FACE_SERVICE_URL || "http://127.0.0.1:8000";
+const PYTHON_URL = process.env.FACE_SERVICE_URL || "http://127.0.0.1:8000";
 const SIMILARITY_THRESHOLD = parseFloat(process.env.FACE_SIMILARITY_THRESHOLD || "0.6");
 
 class FaceAuthService {
@@ -14,7 +14,7 @@ class FaceAuthService {
     static #cosineSimilarity(a, b) {
         let dot = 0, normA = 0, normB = 0;
         for (let i = 0; i < a.length; i++) {
-            dot   += a[i] * b[i];
+            dot += a[i] * b[i];
             normA += a[i] * a[i];
             normB += b[i] * b[i];
         }
@@ -49,7 +49,7 @@ class FaceAuthService {
         if (!fileBuffer) throw new Error("Image file is required.");
 
         const embedding = await this.#getEmbedding(fileBuffer, originalName);
-        const saved     = await FaceAuthModel.saveEmbedding(ua_id, embedding);
+        const saved = await FaceAuthModel.saveEmbedding(ua_id, embedding);
 
         if (!saved) throw new Error("User not found or inactive.");
 
@@ -59,74 +59,77 @@ class FaceAuthService {
     /**
      * Verify face → return same response structure as login API
      */
-    static async verifyFace(fileBuffer, originalName) {
+    static async verifyFace(fileBuffer, originalName, meta = {}) {
+        const { latitude, longitude, ip_address, device_info } = meta;
+
         if (!fileBuffer) throw new Error("Image file is required.");
 
-        // Step 1: Get embedding of incoming face from Python service
         const incomingEmbedding = await this.#getEmbedding(fileBuffer, originalName);
-
-        // Step 2: Fetch all stored embeddings from DB
         const users = await FaceAuthModel.getAllEmbeddings();
 
-        if (users.length === 0)
-            throw new Error("No registered faces found in database.");
+        if (users.length === 0) throw new Error("No registered faces found in database.");
 
-        // Step 3: Cosine similarity — find best match
-        let bestUser  = null;
-        let bestScore = -1;
-
+        let bestUser = null, bestScore = -1;
         for (const user of users) {
-            let storedEmbedding = user.ua_face_embedding;
-
-            // Parse if stored as string
-            if (typeof storedEmbedding === "string") {
-                storedEmbedding = JSON.parse(storedEmbedding);
-            }
-
-            if (!Array.isArray(storedEmbedding)) continue;
-
-            const score = this.#cosineSimilarity(incomingEmbedding, storedEmbedding);
-            if (score > bestScore) {
-                bestScore = score;
-                bestUser  = user;
-            }
+            let emb = user.ua_face_embedding;
+            if (typeof emb === "string") emb = JSON.parse(emb);
+            if (!Array.isArray(emb)) continue;
+            const score = this.#cosineSimilarity(incomingEmbedding, emb);
+            if (score > bestScore) { bestScore = score; bestUser = user; }
         }
 
-        // Step 4: Threshold check
+        // ── Failed: log and throw ──
         if (!bestUser || bestScore < SIMILARITY_THRESHOLD) {
+            await FaceAuthModel.logLogin({
+                ua_id: bestUser?.ua_id ?? null,
+                latitude, longitude,
+                match_score: parseFloat(bestScore.toFixed(4)),
+                ip_address, device_info,
+                status: "failed",
+                failed_reason: "Face not recognized — score below threshold."
+            });
             throw new Error("Face not recognized. Please try again or use password login.");
         }
 
-        // Step 5: Fetch full user details (role name etc.)
         const fullUser = await FaceAuthModel.getUserById(bestUser.ua_id);
         if (!fullUser) throw new Error("User account not found.");
 
-        // Step 6: Build JWT payload — identical to login API
+        // ── Success: log ──
+        await FaceAuthModel.logLogin({
+            ua_id: fullUser.ua_id,
+            latitude, longitude,
+            match_score: parseFloat(bestScore.toFixed(4)),
+            ip_address, device_info,
+            status: "success",
+            failed_reason: null
+        });
+
         const payload = {
-            UserID:   fullUser.ua_id,
+            UserID: fullUser.ua_id,
             Username: fullUser.ua_username,
             FullName: fullUser.ua_full_name,
-            RoleID:   fullUser.ua_role_id,
+            RoleID: fullUser.ua_role_id,
         };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        // Step 7: Return same shape as login API
         return {
             token,
             match_score: parseFloat(bestScore.toFixed(4)),
             user: {
-                email:          fullUser.ua_email,
-                contact_no:     fullUser.ua_contact_no,
-                profile_image:  fullUser.ua_profile_picture,
-                git_username:   fullUser.ua_git_username,
+                email: fullUser.ua_email,
+                contact_no: fullUser.ua_contact_no,
+                profile_image: fullUser.ua_profile_picture,
+                git_username: fullUser.ua_git_username,
                 git_public_key: fullUser.ua_git_public_key,
-                name:           fullUser.ua_full_name,
-                role_id:        fullUser.ua_role_id,
-                role:           fullUser.role_name,
+                name: fullUser.ua_full_name,
+                role_id: fullUser.ua_role_id,
+                role: fullUser.role_name,
             }
         };
     }
+
+    
 
 }
 

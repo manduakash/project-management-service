@@ -11,22 +11,27 @@ class FaceAuthController {
      */
     static async verify(req, res) {
         try {
-            if (!req.file) {
-                return response.error(res, "Image file is required.", 400);
-            }
+            if (!req.file) return response.error(res, "Image file is required.", 400);
+
+            const meta = {
+                latitude: req.body.latitude ?? null,
+                longitude: req.body.longitude ?? null,
+                ip_address: req.ip || req.headers["x-forwarded-for"] || null,
+                device_info: req.headers["user-agent"] ?? null,
+            };
 
             const result = await FaceAuthService.verifyFace(
                 req.file.buffer,
-                req.file.originalname
+                req.file.originalname,
+                meta
             );
 
             return response.success(res, result, "Face verified successfully.", 200);
 
         } catch (err) {
             const status = err.message.includes("not recognized") ? 401
-                         : err.message.includes("No face detected") ? 422
-                         : err.message.includes("required") ? 400 : 500;
-
+                : err.message.includes("No face detected") ? 422
+                    : err.message.includes("required") ? 400 : 500;
             return response.error(res, err.message, status);
         }
     }
@@ -58,7 +63,7 @@ class FaceAuthController {
 
         } catch (err) {
             const status = err.message.includes("required") ? 400
-                         : err.message.includes("not found") ? 404 : 500;
+                : err.message.includes("not found") ? 404 : 500;
 
             return response.error(res, err.message, status);
         }
