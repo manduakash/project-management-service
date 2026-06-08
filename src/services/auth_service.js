@@ -72,7 +72,7 @@ class AuthService {
     }
 
     const payload = {
-      UserID: user.UserID ?? user.UserId ?? user.ua_id ?? null,
+      UserID: user?.UserID ?? null,
       Username: user.Username ?? user.username ?? null,
       FullName: user.FullName ?? user.ua_full_name ?? null,
       RoleID: user.RoleID ?? user.ua_role_id ?? null
@@ -82,6 +82,7 @@ class AuthService {
     const data = {
       token,
       user: {
+        user_id: user.UserID,
         email: user.UserEmail,
         contact_no: user.ContactNumber,
         profile_image: user.ProfilePicture,

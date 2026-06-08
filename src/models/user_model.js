@@ -50,7 +50,6 @@ class UserModel {
     );
 
     // MySQL SP returns nested array
-
     return rows[0][0];
   }
 
