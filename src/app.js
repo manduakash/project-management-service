@@ -8,6 +8,7 @@ import dashboardRoutes from "./routes/dashboard_routes.js";
 import salaryRoutes from "./routes/salary_routes.js";
 import weekoffRoutes from "./routes/weekoff_routes.js";
 import holidayRoutes from "./routes/holiday_routes.js";
+import faceLoginLogsRoutes from "./routes/face_login_logs_routes.js";
 import masterRoutes from "./routes/master_routes.js";
 import notificationRoutes from "./routes/notification_routes.js";
 import attendanceRoutes from "./routes/attendance_routes.js";
@@ -54,6 +55,7 @@ app.use("/api/accountant/dashboard", dashboardRoutes);
 app.use("/api/accountant/salary", salaryRoutes);
 app.use("/api/accountant/weekoffs", weekoffRoutes);
 app.use("/api/accountant/holidays", holidayRoutes);
+app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
 
 
 export default app;
