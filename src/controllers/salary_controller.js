@@ -23,11 +23,11 @@ class SalaryController {
     static async getById(req, res) {
         try {
             const es_id = parseInt(req.params.id);
-            const data  = await SalaryService.getById(es_id);
+            const data = await SalaryService.getById(es_id);
             return response.success(res, data, "Salary record fetched successfully.", 200);
         } catch (err) {
             const status = err.message.includes("Invalid") ? 400
-                         : err.message.includes("No active") ? 404 : 500;
+                : err.message.includes("No active") ? 404 : 500;
             return response.error(res, err.message, status);
         }
     }
@@ -36,15 +36,21 @@ class SalaryController {
      * PUT /api/accountant/salary/:id
      * Updates employee salary structure
      */
-    static async update(req, res) {
+
+    static async upsert(req, res) {
         try {
-            const es_id   = parseInt(req.params.id);
-            const message = await SalaryService.update(es_id, req.body);
-            return response.success(res, null, message, 200);
+            const isUpdate = !!(req.body.sr_id && parseInt(req.body.sr_id) > 0);
+            const result = await SalaryService.upsert(req.body);
+            const httpCode = isUpdate ? 200 : 201;
+
+            return response.success(res, { sr_id: result.sr_id }, result.p_message, httpCode);
         } catch (err) {
-            const status = err.message.includes("Invalid") || err.message.includes("Missing") ? 400
-                         : err.message.includes("No active") ? 404 : 500;
-            return response.error(res, err.message, status);
+            const msg = err.message ?? "";
+            const status = msg.includes("Missing") || msg.includes("Invalid") ? 400
+                : msg.includes("No active") || msg.includes("No salary") ? 404
+                    : msg.includes("already exists") ? 409
+                        : 500;
+            return response.error(res, msg, status);
         }
     }
 
