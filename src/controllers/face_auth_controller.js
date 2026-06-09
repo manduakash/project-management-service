@@ -12,6 +12,7 @@ class FaceAuthController {
     static async verify(req, res) {
         try {
             if (!req.file) return response.error(res, "Image file is required.", 400);
+            if (!req?.latitude || !req?.longitude) return response.error(res, "Geographical parameters required.", 400);
 
             const meta = {
                 latitude: req.body.latitude ?? null,
