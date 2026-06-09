@@ -36,6 +36,21 @@ class SalaryController {
      * PUT /api/accountant/salary/:id
      * Updates employee salary structure
      */
+    static async updateSalaryStructure(req, res) {
+        try {
+            const payload = { es_id: req.params.es_id, ...req.body };
+            const result = await SalaryService.updateSalaryStructure(payload);
+            return res.status(200).json({
+                success: true,
+                message: result.message
+            });
+        } catch (error) {
+            return res.status(error.status || 500).json({
+                success: false,
+                message: error.message || "Internal server error."
+            });
+        }
+    }
 
     static async upsert(req, res) {
         try {
