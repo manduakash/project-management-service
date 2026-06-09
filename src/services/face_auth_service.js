@@ -113,6 +113,8 @@ class FaceAuthService {
             failed_reason: null
         });
 
+        console.log("logResult", logResult);
+
         const payload = {
             UserID: fullUser.ua_id,
             Username: fullUser.ua_username,
