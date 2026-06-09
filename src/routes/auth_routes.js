@@ -12,7 +12,7 @@ router.post("/login", AuthController.login);
 // Store image in memory (buffer) — same as the original face-recog project
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+    limits: { fileSize: 20 * 1024 * 1024 }, // 10MB max
     fileFilter: (req, file, cb) => {
         const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
         if (allowed.includes(file.mimetype)) {
