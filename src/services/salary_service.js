@@ -97,6 +97,22 @@ class SalaryService {
         return await SalaryModel.getSalaryRecords(ua_id, month, year);
     }
 
+    static async updateSalaryStructure(payload) {
+        const { es_id } = payload;
+
+        if (!es_id) {
+            throw { status: 400, message: "Salary record ID (es_id) is required." };
+        }
+
+        const result = await SalaryModel.updateSalaryStructure(payload);
+
+        if (!result.p_message?.startsWith("SUCCESS")) {
+            throw { status: 400, message: result.p_message };
+        }
+
+        return { message: result.p_message };
+    }
+
 }
 
 export default SalaryService;

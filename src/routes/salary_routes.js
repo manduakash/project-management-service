@@ -17,7 +17,9 @@ router.get("/", SalaryController.getAll);
 // GET  /api/accountant/salary/:id
 router.get("/:id", SalaryController.getById);
 
+router.put("/salary-structure/:es_id", SalaryController.updateSalaryStructure);
+
 // PUT  /api/accountant/salary/:id
-router.post("/", SalaryController.upsert);
+router.post("/records", SalaryController.upsert);
 
 export default router;

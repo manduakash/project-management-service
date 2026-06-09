@@ -22,6 +22,67 @@ class SalaryModel {
         }
     }
 
+    static async updateSalaryStructure(payload) {
+        const connection = await pool.getConnection();
+        try {
+            const {
+                es_id,
+                es_designation,
+                es_monthly_salary,
+                es_basic,
+                es_hra,
+                es_conv_allow,
+                es_special_allow,
+                es_pf_employee,
+                es_esi_employee,
+                es_ptax,
+                es_is_discipline_applicable,
+                es_other_incentive,
+                es_bank_ac_no,
+                es_ifsc_code,
+                es_effective_from,
+                es_mobile_no
+            } = payload;
+
+            await connection.query(
+                `CALL sp_salary_update(
+        ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?,
+        ?, ?,
+        ?, ?, ?,
+        ?,
+        @p_message
+    )`,
+                [
+                    es_id,                        // 1  p_es_id
+                    es_designation,               // 2  p_es_designation
+                    es_monthly_salary,            // 3  p_es_monthly_salary
+                    es_basic,                     // 4  p_es_basic
+                    es_hra,                       // 5  p_es_hra
+                    es_conv_allow,                // 6  p_es_conv_allow
+                    es_special_allow,             // 7  p_es_special_allow
+                    es_pf_employee,               // 8  p_es_pf_employee
+                    es_esi_employee,              // 9  p_es_esi_employee
+                    es_ptax,                      // 10 p_es_ptax
+                    es_is_discipline_applicable,  // 11 p_es_is_discipline_applicable
+                    es_other_incentive,           // 12 p_es_other_incentive
+                    es_bank_ac_no,                // 13 p_es_bank_ac_no
+                    es_ifsc_code,                 // 14 p_es_ifsc_code
+                    es_effective_from,            // 15 p_es_effective_from
+                    es_mobile_no                  // 16 p_es_mobile_no
+                ]
+            );
+
+            const [[result]] = await connection.query(
+                "SELECT @p_message AS p_message"
+            );
+            return result; // { p_message }
+        } finally {
+            connection.release();
+        }
+    }
+
     static async upsert(payload) {
         const connection = await pool.getConnection();
         try {
