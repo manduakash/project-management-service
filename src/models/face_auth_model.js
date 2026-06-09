@@ -15,6 +15,8 @@ class FaceAuthModel {
             const [[result]] = await connection.query(
                 "SELECT @p_action AS action, @p_message AS message"
             );
+
+            console.log("result", result)
             return result;
         } finally {
             connection.release();
