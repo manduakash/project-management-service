@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@sparticuz/chromium": "^149.0.0",
     "axios": "^1.17.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
@@ -27,6 +28,7 @@
     "pdfkit": "^0.18.0",
     "pdfkit-table": "^0.1.99",
     "puppeteer": "^25.1.0",
+    "puppeteer-core": "^25.1.0",
     "serverless-http": "^4.0.0"
   },
   "devDependencies": {
