@@ -2,7 +2,8 @@
 import DashboardService from "../services/dashboard_service.js";
 import response from "../utils/response.js";
 import ejs from 'ejs';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+
 import chromium from '@sparticuz/chromium';
 import path from 'path';
 import numberToWords from 'number-to-words';
@@ -338,12 +339,22 @@ class DashboardController {
                 { salary: data[0], netSalaryWords, logoBase64 }
             );
 
-            const browser = await puppeteer.launch({
-                args: chromium.args,
-                defaultViewport: chromium.defaultViewport,
-                executablePath: await chromium.executablePath(),
-                headless: chromium.headless,
-            });
+            const isLocal = process.env.NODE_ENV === 'development';
+
+            const browser = await puppeteer.launch(
+                isLocal
+                    ? {
+                        executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // your local Chrome
+                        headless: true,
+                        args: ['--no-sandbox']
+                    }
+                    : {
+                        args: chromium.args,
+                        defaultViewport: chromium.defaultViewport,
+                        executablePath: await chromium.executablePath(),
+                        headless: chromium.headless,
+                    }
+            );
 
             const page = await browser.newPage();
 
