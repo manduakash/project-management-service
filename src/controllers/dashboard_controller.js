@@ -286,47 +286,18 @@ class DashboardController {
         }
     }
 
-    // static async generateSalarySlip(req, res) {
-    //     try {
-    //         const data = await DashboardService.getSalary(req.query);
-
-    //         const netSalaryWords = numberToWords.toWords(data[0].net_salary || 0);
-
-    //         // ✅ Read logo as base64
-    //         const logoBase64 = fs.readFileSync(
-    //             path.join(process.cwd(), 'src/public/images/logo.png')
-    //         ).toString('base64');
-
-    //         const html = await ejs.renderFile(
-    //             path.join(process.cwd(), '/src/views', 'payslip.ejs'),
-    //             { salary: data[0], netSalaryWords, logoBase64 }  // ✅ pass it
-    //         );
-
-    //         const browser = await puppeteer.launch({
-    //             headless: true,
-    //             args: ['--no-sandbox']
-    //         });
-
-    //         const page = await browser.newPage();
-
-    //         await page.setContent(html, { waitUntil: 'networkidle0' });
-
-    //         const pdf = await page.pdf({ format: 'A4', printBackground: true });
-
-    //         await browser.close();
-
-    //         res.setHeader('Content-Type', 'application/pdf');
-    //         res.setHeader('Content-Disposition', `inline; filename=salary-slip.pdf`);
-    //         res.end(pdf);
-
-    //     } catch (err) {
-    //         return response.error(res, err.message, 500);
-    //     }
-    // }
-
     static async generateSalarySlip(req, res) {
         try {
-            const data = await DashboardService.getSalary(req.query);
+            if (!(req?.query?.__ua && req?.query?.__mxT && req?.query?.__yIU)) {
+                throw new Error("Please provide the required parameters.");
+            }
+            const user_id = atob(req?.query?.__ua);
+            const month = atob(req?.query?.__mxT);
+            const year = atob(req?.query?.__yIU);
+
+            const data = await DashboardService.getSalary({ user_id, month, year });
+
+            const workingData = await DashboardService.getWorking({ user_id, month, year });
 
             const netSalaryWords = numberToWords.toWords(data[0].net_salary || 0);
 
@@ -334,9 +305,16 @@ class DashboardController {
                 path.join(process.cwd(), 'src/public/images/logo.png')
             ).toString('base64');
 
+            const salary = {
+                ...data[0],
+                payable_days: workingData[0]?.total_days,
+                paid_days: workingData[0]?.total_days - workingData[0]?.absent,
+                adj_days: workingData[0]?.absent
+            }
+
             const html = await ejs.renderFile(
                 path.join(process.cwd(), '/src/views', 'payslip.ejs'),
-                { salary: data[0], netSalaryWords, logoBase64 }
+                { salary, netSalaryWords, logoBase64 }
             );
 
             const isLocal = process.env.NODE_ENV === 'development';
@@ -360,8 +338,13 @@ class DashboardController {
 
             await page.setContent(html, { waitUntil: 'networkidle0' });
 
+            const bodyHeight = await page.evaluate(() => {
+                return document.body.scrollHeight;
+            });
+
             const pdf = await page.pdf({
-                format: 'A4',
+                width: '210mm',
+                height: `${bodyHeight}px`,
                 printBackground: true
             });
 

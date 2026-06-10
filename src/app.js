@@ -40,7 +40,7 @@ app.use(cors({
 }));
 
 
-app.use("/generate", slipRoutes);
+app.use("/api/generate", slipRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
 app.use("/api/users", userRoutes);
