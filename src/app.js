@@ -10,21 +10,37 @@ import weekoffRoutes from "./routes/weekoff_routes.js";
 import holidayRoutes from "./routes/holiday_routes.js";
 import faceLoginLogsRoutes from "./routes/face_login_logs_routes.js";
 import masterRoutes from "./routes/master_routes.js";
+import slipRoutes from "./routes/payslip_routes.js";
 import notificationRoutes from "./routes/notification_routes.js";
 import attendanceRoutes from "./routes/attendance_routes.js";
 import adminRoutes from "./routes/admin_routes.js";
 import authMiddleware from "./middleware/auth_middleware.js";
 import authorize from "./middleware/authorization_middleware.js";
 import cors from "cors";
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 
 app.use(express.json({ limit: "20mb" }));
+// app.use(express.static('public'));
+app.use(express.static(join(__dirname, 'public')));
+console.log('Static path:', join(__dirname, 'public'));
+console.log('__dirname:', __dirname);
+
+app.set('view engine', 'ejs');
+// app.set('views', './src/views');
+app.set('views', join(__dirname, './src/views'));
 
 app.use(cors({
     origin: "*"
 }));
 
+
+app.use("/generate", slipRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
 app.use("/api/users", userRoutes);
