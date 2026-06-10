@@ -1,6 +1,11 @@
 
 import DashboardService from "../services/dashboard_service.js";
 import response from "../utils/response.js";
+import ejs from 'ejs';
+import puppeteer from 'puppeteer';
+import path from 'path';
+import numberToWords from 'number-to-words';
+import fs from 'fs';
 
 class DashboardController {
     static async getWeeklyAttendanceTrend(req, res) {
@@ -274,6 +279,44 @@ class DashboardController {
         try {
             const data = await DashboardService.getSalary(req.query);
             return response.success(res, data, "Salary data fetched successfully.", 200);
+        } catch (err) {
+            return response.error(res, err.message, 500);
+        }
+    }
+
+    static async generateSalarySlip(req, res) {
+        try {
+            const data = await DashboardService.getSalary(req.query);
+
+            const netSalaryWords = numberToWords.toWords(data[0].net_salary || 0);
+
+            // ✅ Read logo as base64
+            const logoBase64 = fs.readFileSync(
+                path.join(process.cwd(), 'src/public/images/logo.png')
+            ).toString('base64');
+
+            const html = await ejs.renderFile(
+                path.join(process.cwd(), '/src/views', 'payslip.ejs'),
+                { salary: data[0], netSalaryWords, logoBase64 }  // ✅ pass it
+            );
+
+            const browser = await puppeteer.launch({
+                headless: true,
+                args: ['--no-sandbox']
+            });
+
+            const page = await browser.newPage();
+
+            await page.setContent(html, { waitUntil: 'networkidle0' });
+
+            const pdf = await page.pdf({ format: 'A4', printBackground: true });
+
+            await browser.close();
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `inline; filename=salary-slip.pdf`);
+            res.end(pdf);
+
         } catch (err) {
             return response.error(res, err.message, 500);
         }

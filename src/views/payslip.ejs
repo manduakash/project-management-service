@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Payslip</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    .ps-wrap {
+      width: 860px;
+      margin: auto;
+      background: #fff;
+      border: 2px solid #000;
+      padding: 20px;
+      color: #000;
+    }
+
+    /* ── Header ── */
+    .ps-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+    }
+
+    .ps-logo-box {
+      min-width: 260px;
+    }
+
+    .ps-logo-box img {
+      width: 260px;
+    }
+
+    .ps-company {
+      text-align: right;
+    }
+
+    .ps-company h2 {
+      color: #0a5b2a;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .ps-company p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #222;
+    }
+
+    /* ── Title ── */
+    .ps-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #676767;
+      border: 1px solid #999;
+      padding: 6px;
+      margin-top: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Employee Info ── */
+    .ps-info {
+      display: flex;
+      margin-top: 12px;
+      border: 0px solid #999;
+    }
+
+    .ps-info table {
+      width: 50%;
+      border-collapse: collapse;
+    }
+
+    .ps-info table:first-child {
+      /* border-right: 1px solid #999; */
+    }
+
+    .ps-info td {
+      padding: 4px 8px;
+      font-size: 12px;
+      vertical-align: top;
+    }
+
+    .ps-info td:first-child {
+      /* font-weight: bold; */
+      white-space: nowrap;
+      width: 42%;
+    }
+
+    /* ── Attendance ── */
+    .ps-attend {
+      margin-top: 10px;
+      border: 2px solid #999;
+      display: flex;
+      font-size: 12px;
+    }
+
+    .ps-attend-label {
+      font-weight: bold;
+      padding: 6px 10px;
+      border-right: 1px solid #999;
+      min-width: 90px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .ps-attend-body {
+      padding: 6px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .ps-attend-body div {
+      display: flex;
+      gap: 10px;
+    }
+
+    .ps-attend-body span {
+      min-width: 80px;
+    }
+
+    /* ── Salary Table ── */
+    .sal-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0px;
+      font-size: 12px;
+    }
+
+    .sal-table th {
+      background: #fff;
+      border-left: 1px solid #999;
+      border-right: 1px solid #999;
+      border-bottom: 1px solid #999;
+      /* border-bottom: 0px; */
+      padding: 6px 8px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .sal-table td {
+      border-left: 1px solid #999;
+      border-right: 1px solid #999;
+      padding: 5px 8px;
+    }
+
+    .sal-table .amt {
+      text-align: right;
+    }
+
+    .sal-table .total-row {
+      font-weight: bold;
+    }
+
+    .sal-table .total-row td {
+      text-align: right;
+      border-top: 1px solid #999;
+      border-bottom: 0px;
+    }
+
+    .sal-table .total-row td:first-child,
+    .sal-table .total-row td:nth-child(3) {
+      text-align: left;
+    }
+
+    .sal-table .total-row td:first-child,
+    .sal-table .total-row td:nth-child(3) {
+      /* text-align: right; */
+      border-bottom: none;
+    }
+
+    .sal-table .blank-row td {
+      padding-block: 20px;
+    }
+
+    /* ── Net Pay ── */
+    .ps-net {
+      margin-top: 0.5px;
+      border: 2px solid #999;
+      display: flex;
+      font-size: 14px;
+      font-weight: bold;
+      color: #5a5a5a;
+    }
+
+    .ps-net-left {
+      flex: 1;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .ps-net-right {
+      flex: 1;
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .ps-net-left {
+      border-right: 1px solid #999;
+    }
+
+    /* ── Message ── */
+    .ps-msg {
+      margin-top: 14px;
+      border: 0px solid #bbb;
+    }
+
+    .ps-msg-head {
+      font-size: 12px;
+      padding: 1px 10px;
+      border-bottom: 0px solid #bbb;
+    }
+
+    .ps-msg-body {
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .bottom-border-none {
+      border-bottom: none !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ps-wrap">
+
+    <!-- Header -->
+    <div class="ps-header">
+      <div class="ps-logo-box">
+        <img src="data:image/png;base64,<%= logoBase64 %>" alt="Company Logo" />
+      </div>
+      <div class="ps-company">
+        <h2>Nexintel Synergy Private Limited</h2>
+        <p>
+          Unit No.1306, Arch Square- X2,<br>
+          EP Block, Salt Lake City, Sector-V,<br>
+          Bidhannagar, Kolkata - 600 0091, West Bengal
+        </p>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="ps-title">Pay Slip</div>
+
+    <!-- Employee Info -->
+    <div class="ps-info">
+      <table>
+        <tr>
+          <td>Employee Name:</td>
+          <td>
+            <%= salary?.employee_name || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Employee ID:</td>
+          <td>
+            <%= salary?.employee_id || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Bank A/c No:</td>
+          <td>
+            <%= salary?.bank_ac_no || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Bank Name:</td>
+          <td>
+            <%= salary?.bank_name || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>IFS Code:</td>
+          <td>
+            <%= salary?.ifsc_code || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Designation:</td>
+          <td>
+            <%= salary?.designation || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Date of Joining:</td>
+          <td>
+            <%= salary?.date_of_joining || '-' %>
+          </td>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <td>Pay Slip forMonth:</td>
+          <td>
+            <%= salary?.salary_month || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Payable Days:</td>
+          <td>
+            <%= salary?.payable_days || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Basic Rate:</td>
+          <td>
+            <%= salary?.basic ? Number(salary.basic).toLocaleString('en-IN') : '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>P.F. No.:</td>
+          <td>
+            <%= salary?.pf_no || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>E.S.I. No.:</td>
+          <td>
+            <%= salary?.esi_no || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>PAN:</td>
+          <td>
+            <%= salary?.pan || '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Aadhar:</td>
+          <td>
+            <%= salary?.aadhar || '-' %>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Attendance -->
+    <div class="ps-attend">
+      <div class="ps-attend-label">Attendance</div>
+      <div class="ps-attend-body">
+        <div>
+          <span>Paid Days :</span>
+          <b>
+            <%= salary?.paid_days ?? '-' %>
+          </b>
+        </div>
+        <div>
+          <span>Adj. Days :</span>
+          <b>
+            <%= salary?.adj_days ?? '-' %>
+          </b>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings & Deductions -->
+    <table class="sal-table">
+      <thead>
+        <tr>
+          <th style="width:32%;text-align:left;">Earnings</th>
+          <th style="width:18%;text-align:right;">Amount (Rs.)</th>
+          <th style="width:32%;text-align:left;">Deductions</th>
+          <th style="width:18%;text-align:right;">Amount (Rs.)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="bottom-border-none">Basic Salary</td>
+          <td class="amt">
+            <%= salary?.basic ? Number(salary.basic).toLocaleString('en-IN') : '-' %>
+          </td>
+          <td>Provident Fund (PF)</td>
+          <td class="amt">
+            <%= salary?.pf_deduction ? Number(salary.pf_deduction).toLocaleString('en-IN') : '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td class="bottom-border-none">HRA</td>
+          <td class="amt">
+            <%= salary?.hra ? Number(salary.hra).toLocaleString('en-IN') : '-' %>
+          </td>
+          <td class="bottom-border-none">ESI</td>
+          <td class="amt">
+            <%= salary?.esi_deduction ? Number(salary.esi_deduction).toLocaleString('en-IN') : '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td class="bottom-border-none">Conveyance</td>
+          <td class="amt">
+            <%= salary?.conv_allowance ? Number(salary.conv_allowance).toLocaleString('en-IN') : '-' %>
+          </td>
+          <td>Professional Tax</td>
+          <td class="amt">
+            <%= salary?.professional_tax ? Number(salary.professional_tax).toLocaleString('en-IN') : '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Special Allowance</td>
+          <td class="amt">
+            <%= salary?.special_allowance ? Number(salary.special_allowance).toLocaleString('en-IN') : '-' %>
+          </td>
+          <td>Loan / Advance</td>
+          <td class="amt">
+            <%= salary?.loan_advance ? Number(salary.loan_advance).toLocaleString('en-IN') : '-' %>
+          </td>
+        </tr>
+        <tr>
+          <td>Discipline Allowance</td>
+          <td class="amt">
+            <%= salary?.discipline_incentive ? Number(salary.discipline_incentive).toLocaleString('en-IN') : '-' %>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+
+        <!-- Blanks -->
+        <tr class="blank-row">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="blank-row">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+
+
+        <tr class="total-row">
+          <td style="text-align:left;font-weight:bold;">Total Gross</td>
+          <td class="amt">
+            <%= salary?.gross_salary ? Number(salary.gross_salary).toLocaleString('en-IN') : '-' %>
+          </td>
+          <td style="text-align:left;font-weight:bold;">Total Deductions</td>
+          <td class="amt">
+            <%= salary?.total_deduction ? Number(salary.total_deduction).toLocaleString('en-IN') : '-' %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Net Pay -->
+    <div class="ps-net">
+      <div class="ps-net-left">
+        NET PAY (Rs.):&nbsp;
+        <%= salary?.net_salary ? Number(salary.net_salary).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'
+          %>
+      </div>
+
+      <div class="ps-net-right">
+        <%= netSalaryWords?.toUpperCase()+" ONLY" || '-' %>
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div class="ps-msg">
+      <div class="ps-msg-head">Message :</div>
+      <div class="ps-msg-body">
+        This document is issued purely for information purpose to the concerned employee.
+        Nexintel Synergy Private Limited is not responsible for any loans/credits etc
+        advanced based on this document.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>
