@@ -17,6 +17,7 @@ import attendanceRoutes from "./routes/attendance_routes.js";
 import adminRoutes from "./routes/admin_routes.js";
 import authMiddleware from "./middleware/auth_middleware.js";
 import authorize from "./middleware/authorization_middleware.js";
+import leaveRoutes from './routes/leave_application_routes.js';
 import cors from "cors";
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -74,6 +75,9 @@ app.use("/api/accountant/dashboard", dashboardRoutes);
 app.use("/api/accountant/salary", salaryRoutes);
 app.use("/api/accountant/weekoffs", weekoffRoutes);
 app.use("/api/accountant/holidays", holidayRoutes);
+app.use("/api/accountant/holidays", holidayRoutes);
+app.use('/api/leave', leaveRoutes);
+
 
 
 export default app;
