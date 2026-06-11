@@ -4,6 +4,7 @@ import designationRoutes from "./routes/designation_routes.js";
 import projectRoutes from "./routes/project_routes.js";
 import taskRoutes from "./routes/task_routes.js";
 import userRoutes from "./routes/user_routes.js";
+import profileRoutes from "./routes/profile_routes.js";
 import dashboardRoutes from "./routes/dashboard_routes.js";
 import salaryRoutes from "./routes/salary_routes.js";
 import weekoffRoutes from "./routes/weekoff_routes.js";
@@ -46,6 +47,7 @@ app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
 app.use("/api/users", userRoutes);
 
 app.use("/api", authMiddleware);
+app.use("/api/profile", profileRoutes);
 app.use("/api/admin", authorize([1]));
 app.use("/api/lead", authorize([2]));
 app.use("/api/developer", authorize([3]));
