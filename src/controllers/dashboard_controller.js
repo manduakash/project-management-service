@@ -308,8 +308,8 @@ class DashboardController {
             const salary = {
                 ...data[0],
                 payable_days: workingData[0]?.total_days,
-                paid_days: workingData[0]?.total_days - workingData[0]?.absent,
-                adj_days: workingData[0]?.absent
+                paid_days: workingData[0]?.total_days - workingData[0]?.absent - workingData[0]?.on_leave, 
+                adj_days: workingData[0]?.absent + workingData[0]?.on_leave
             }
 
             const html = await ejs.renderFile(
