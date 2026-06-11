@@ -46,6 +46,8 @@ app.use("/api/generate", slipRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/master", masterRoutes);
+// app.use("/api/master", authorize([1, 2, 3, 4, 5])); // kept if future roles need restriction
 
 app.use("/api", authMiddleware);
 app.use("/api/profile", profileRoutes);
@@ -53,14 +55,12 @@ app.use("/api/admin", authorize([1]));
 app.use("/api/lead", authorize([2]));
 app.use("/api/developer", authorize([3]));
 app.use("/api/executive", authorize([1, 2, 3, 4, 5]));
-app.use("/api/master", authorize([1, 2, 3, 4, 5])); // kept if future roles need restriction
 
 
 app.use("/api/admin/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/developer/dashboard", dashboardRoutes);
 app.use("/api/lead/dashboard", dashboardRoutes);
-app.use("/api/master", masterRoutes);
 
 app.use("/api/designations", designationRoutes);
 app.use("/api/projects", projectRoutes);
