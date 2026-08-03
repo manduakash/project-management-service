@@ -21,6 +21,9 @@ import leaveRoutes from './routes/leave_application_routes.js';
 import cors from "cors";
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,41 +45,41 @@ app.use(cors({
 }));
 
 
-app.use("/api/generate", slipRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/accountant/face-login-logs", faceLoginLogsRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/master", masterRoutes);
-// app.use("/api/master", authorize([1, 2, 3, 4, 5])); // kept if future roles need restriction
+app.use("/attendance-api/api/generate", slipRoutes);
+app.use("/attendance-api/api/auth", authRoutes);
+app.use("/attendance-api/api/accountant/face-login-logs", faceLoginLogsRoutes);
+app.use("/attendance-api/api/users", userRoutes);
+app.use("/attendance-api/api/master", masterRoutes);
+// app.use("/attendance-api/api/master", authorize([1, 2, 3, 4, 5])); // kept if future roles need restriction
 
 app.use("/api", authMiddleware);
-app.use("/api/profile", profileRoutes);
-app.use("/api/admin", authorize([1]));
-app.use("/api/lead", authorize([2]));
-app.use("/api/developer", authorize([3]));
-app.use("/api/executive", authorize([1, 2, 3, 4, 5]));
+app.use("/attendance-api/api/profile", profileRoutes);
+app.use("/attendance-api/api/admin", authorize([1]));
+app.use("/attendance-api/api/lead", authorize([2]));
+app.use("/attendance-api/api/developer", authorize([3]));
+app.use("/attendance-api/api/executive", authorize([1, 2, 3, 4, 5]));
 
 
-app.use("/api/admin/dashboard", dashboardRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/developer/dashboard", dashboardRoutes);
-app.use("/api/lead/dashboard", dashboardRoutes);
+app.use("/attendance-api/api/admin/dashboard", dashboardRoutes);
+app.use("/attendance-api/api/admin", adminRoutes);
+app.use("/attendance-api/api/developer/dashboard", dashboardRoutes);
+app.use("/attendance-api/api/lead/dashboard", dashboardRoutes);
 
-app.use("/api/designations", designationRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/tasks", taskRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/attendance", attendanceRoutes);
+app.use("/attendance-api/api/designations", designationRoutes);
+app.use("/attendance-api/api/projects", projectRoutes);
+app.use("/attendance-api/api/tasks", taskRoutes);
+app.use("/attendance-api/api/notifications", notificationRoutes);
+app.use("/attendance-api/api/attendance", attendanceRoutes);
 
-// app.use("/api/admin", authorize(["admin"]), adminRoutes);
-// app.use("/api/admin", authorize(["admin"]), adminRoutes);
-app.use("/api/executive/dashboard", dashboardRoutes);
-app.use("/api/accountant/dashboard", dashboardRoutes);
-app.use("/api/accountant/salary", salaryRoutes);
-app.use("/api/accountant/weekoffs", weekoffRoutes);
-app.use("/api/accountant/holidays", holidayRoutes);
-app.use("/api/accountant/holidays", holidayRoutes);
-app.use('/api/leave', leaveRoutes);
+// app.use("/attendance-api/api/admin", authorize(["admin"]), adminRoutes);
+// app.use("/attendance-api/api/admin", authorize(["admin"]), adminRoutes);
+app.use("/attendance-api/api/executive/dashboard", dashboardRoutes);
+app.use("/attendance-api/api/accountant/dashboard", dashboardRoutes);
+app.use("/attendance-api/api/accountant/salary", salaryRoutes);
+app.use("/attendance-api/api/accountant/weekoffs", weekoffRoutes);
+app.use("/attendance-api/api/accountant/holidays", holidayRoutes);
+app.use("/attendance-api/api/accountant/holidays", holidayRoutes);
+app.use('/attendance-api/api/leave', leaveRoutes);
 
 
 

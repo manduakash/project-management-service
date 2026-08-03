@@ -68,6 +68,7 @@ class FaceAuthService {
             (now - this.cacheLoadedAt) > this.CACHE_TTL
         ) {
             const users = await FaceAuthModel.getAllEmbeddings();
+            console.log("users", users)
 
             this.embeddingCache = users
                 .map(user => {

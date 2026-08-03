@@ -21,15 +21,19 @@ class FaceAuthController {
                 device_info: req.headers["user-agent"] ?? null,
             };
 
+            console.log("hii")
             const result = await FaceAuthService.verifyFace(
                 req.file.buffer,
                 req.file.originalname,
                 meta
             );
 
+            console.log(result);
+
             return response.success(res, result, "Face verified successfully.", 200);
 
         } catch (err) {
+            console.log(err);
             const status = err.message.includes("not recognized") ? 401
                 : err.message.includes("No face detected") ? 422
                     : err.message.includes("required") ? 400 : 500;

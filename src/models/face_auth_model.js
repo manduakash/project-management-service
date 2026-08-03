@@ -29,6 +29,7 @@ class FaceAuthModel {
      */
     static async getAllEmbeddings() {
         const connection = await pool.getConnection();
+        console.log("connection", connection)
         try {
             const [rows] = await connection.query(`
                 SELECT
@@ -46,6 +47,7 @@ class FaceAuthModel {
                 WHERE ua_isactive = 1
                   AND ua_face_embedding IS NOT NULL
             `);
+            console.log("rows", rows || "")
             return rows;
         } finally {
             connection.release();
