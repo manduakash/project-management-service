@@ -48,7 +48,7 @@ class FaceAuthController {
             const distance = getDistanceInMeters(OFFICE_LAT, OFFICE_LNG, latitude, longitude);
 
             if (distance > ALLOWED_RADIUS_METERS) {
-                return response.error(res, "please checkin near office and you cannot checkin than 20 meters of distance", 400);
+                return response.error(res, "Check-in is only allowed within 20 meters of the office premises.", 400);
             }
 
             const meta = {
