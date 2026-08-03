@@ -1,6 +1,28 @@
 import FaceAuthService from "../services/face_auth_service.js";
 import response from "../utils/response.js";
 
+const OFFICE_LAT = 22.572386;
+const OFFICE_LNG = 88.435969;
+const ALLOWED_RADIUS_METERS = 20;
+
+function getDistanceInMeters(lat1, lon1, lat2, lon2) {
+    const toRad = (deg) => (deg * Math.PI) / 180;
+    const R = 6371000; // Earth radius in meters
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
 class FaceAuthController {
 
     /**
@@ -9,14 +31,29 @@ class FaceAuthController {
      *
      * Same response structure as POST /api/auth/login
      */
+
+
     static async verify(req, res) {
         try {
             if (!req.file) return response.error(res, "Image file is required.", 400);
             if (!req?.body?.latitude || !req?.body?.longitude) return response.error(res, "Geographical parameters required.", 400);
 
+            const latitude = parseFloat(req.body.latitude);
+            const longitude = parseFloat(req.body.longitude);
+
+            if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+                return response.error(res, "Invalid geographical parameters.", 400);
+            }
+
+            const distance = getDistanceInMeters(OFFICE_LAT, OFFICE_LNG, latitude, longitude);
+
+            if (distance > ALLOWED_RADIUS_METERS) {
+                return response.error(res, "please checkin near office and you cannot checkin than 20 meters of distance", 400);
+            }
+
             const meta = {
-                latitude: req.body.latitude ?? null,
-                longitude: req.body.longitude ?? null,
+                latitude,
+                longitude,
                 ip_address: req.ip || req.headers["x-forwarded-for"] || null,
                 device_info: req.headers["user-agent"] ?? null,
             };
