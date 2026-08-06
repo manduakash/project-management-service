@@ -39,6 +39,28 @@ class AttendanceController {
     }
   }
 
+  static async getDailyAttendanceByUserMonth(req, res) {
+    try {
+      const { userId, month, year } = req.query;
+
+      if (!userId) {
+        return response.error(res, "userId is required", 400);
+      }
+      if (!month) {
+        return response.error(res, "month is required", 400);
+      }
+      if (!year) {
+        return response.error(res, "year is required", 400);
+      }
+
+      const attendanceLogs = await AttendanceService.getDailyAttendanceByUserMonth(userId, month, year);
+
+      return response.success(res, attendanceLogs, "attendance logs fetched", 200);
+    } catch (error) {
+      return response.error(res, error?.message || "Internal server error", 500);
+    }
+  }
+
   static async getMonthlyAttendanceReport(req, res) {
     try {
       const { month, year } = req.query;

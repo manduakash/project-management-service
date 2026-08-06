@@ -32,6 +32,19 @@ class AttendanceModel {
         }
     }
 
+    static async getDailyAttendanceByUserMonth(userId, month, year) {
+        const connection = await pool.getConnection();
+        try {
+            const [rows] = await connection.query(
+                "CALL sp_getDailyAttendanceByUserMonth(?,?,?)",
+                [userId, month, year]
+            );
+            return rows[0] || [];
+        } finally {
+            connection.release();
+        }
+    }
+
     static async getMonthlyAttendanceReport(month, year) {
         const connection = await pool.getConnection();
         try {

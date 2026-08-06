@@ -9,6 +9,10 @@ class AttendanceService {
     return await AttendanceModel.getDailyAttendance(date);
   }
 
+  static async getDailyAttendanceByUserMonth(userId, month, year) {
+    return await AttendanceModel.getDailyAttendanceByUserMonth(userId, month, year);
+  }
+
   static async getMonthlyAttendanceReport(month, year) {
     return await AttendanceModel.getMonthlyAttendanceReport(month, year);
   }

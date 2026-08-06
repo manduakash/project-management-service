@@ -5,6 +5,7 @@ import authorize from "../middleware/authorization_middleware.js";
 const router = express.Router();
 
 router.get("/", AttendanceController.getDailyAttendance);
+router.get("/get-daily-attendance-by-user-month", AttendanceController.getDailyAttendanceByUserMonth);
 router.get("/get-monthly-report", AttendanceController.getMonthlyAttendanceReport);
 router.get("/export-monthly-report", AttendanceController.exportMonthlyAttendanceReport);
 router.post("/update-daily-attendance", AttendanceController.updateDailyAttendance);
