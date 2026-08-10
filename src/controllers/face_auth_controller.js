@@ -1,8 +1,8 @@
 import FaceAuthService from "../services/face_auth_service.js";
 import response from "../utils/response.js";
 
-const OFFICE_LAT = 22.572386;
-const OFFICE_LNG = 88.435969;
+const OFFICE_LAT = 22.5726203;
+const OFFICE_LNG = 88.4364881;
 const ALLOWED_RADIUS_METERS = 50;
 
 function getDistanceInMeters(lat1, lon1, lat2, lon2) {
