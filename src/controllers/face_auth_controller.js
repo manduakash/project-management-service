@@ -3,7 +3,7 @@ import response from "../utils/response.js";
 
 const OFFICE_LAT = 22.5726203;
 const OFFICE_LNG = 88.4364881;
-const ALLOWED_RADIUS_METERS = 50;
+const ALLOWED_RADIUS_METERS = 100;
 
 function getDistanceInMeters(lat1, lon1, lat2, lon2) {
     const toRad = (deg) => (deg * Math.PI) / 180;

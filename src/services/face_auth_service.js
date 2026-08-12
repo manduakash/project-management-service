@@ -2,6 +2,7 @@ import axios from "axios";
 import FormData from "form-data";
 import jwt from "jsonwebtoken";
 import FaceAuthModel from "../models/face_auth_model.js";
+import AttendanceModel from "../models/attendance_model.js";
 
 const PYTHON_URL = process.env.FACE_SERVICE_URL || "http://127.0.0.1:8000";
 const SIMILARITY_THRESHOLD = parseFloat(process.env.FACE_SIMILARITY_THRESHOLD || "0.6");
@@ -165,8 +166,27 @@ class FaceAuthService {
             );
         }
 
+        const now = new Date();
+
+        const date = now.toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata"
+        });
+
+        const currentTime = now.toLocaleTimeString("en-GB", {
+            timeZone: "Asia/Kolkata",
+            hour12: false
+        });
+
+        let checkIn = currentTime;
+        let checkOut = null;
+
+        if (currentTime >= "18:30:00") {
+            checkOut = currentTime;
+        }
+
+
         // Run both DB operations together
-        const [fullUser, logResult] = await Promise.all([
+        const [fullUser, logResult, attendanceResult] = await Promise.all([
             FaceAuthModel.getUserById(bestUser.ua_id),
 
             FaceAuthModel.upsertLoginLog({
@@ -178,7 +198,19 @@ class FaceAuthService {
                 device_info,
                 status: "success",
                 failed_reason: null
-            })
+            }),
+
+            AttendanceModel.updateDailyAttendance(
+                bestUser.ua_id,
+                date,
+                checkIn,
+                checkOut,
+                1,
+                1,
+                "-",
+                14
+            )
+
         ]);
 
         if (!fullUser) {
@@ -207,7 +239,8 @@ class FaceAuthService {
             user: {
                 email: fullUser.ua_email,
                 contact_no: fullUser.ua_contact_no,
-                profile_image: fullUser.ua_profile_picture,
+                // profile_image: fullUser.ua_profile_picture,
+                profile_image: "",
                 git_username: fullUser.ua_git_username,
                 git_public_key: fullUser.ua_git_public_key,
                 name: fullUser.ua_full_name,
