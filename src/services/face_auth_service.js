@@ -104,6 +104,7 @@ class FaceAuthService {
      * Verify face → return same response structure as login API
      */
     static async verifyFace(fileBuffer, originalName, meta = {}) {
+        const t0 = Date.now();
         const {
             latitude,
             longitude,
@@ -120,9 +121,11 @@ class FaceAuthService {
             fileBuffer,
             originalName
         );
+        const tEmbed = Date.now();
 
         // Cached embeddings
         const users = await this.getCachedEmbeddings();
+        const tCache = Date.now();
 
         if (!users.length) {
             throw new Error("No registered faces found.");
@@ -143,6 +146,7 @@ class FaceAuthService {
                 bestUser = users[i];
             }
         }
+        const tMatch = Date.now();
 
         const score = Number(bestScore.toFixed(4));
 
@@ -160,6 +164,12 @@ class FaceAuthService {
                 status: "failed",
                 failed_reason: "Face not recognized — score below threshold."
             }).catch(console.error);
+
+            console.log(
+                `[verifyFace] embed=${tEmbed - t0}ms cache=${tCache - tEmbed}ms ` +
+                `match=${tMatch - tCache}ms total=${Date.now() - t0}ms ` +
+                `(FAILED, users compared=${users.length})`
+            );
 
             throw new Error(
                 "Face not recognized. Please try again or use password login."
@@ -183,7 +193,7 @@ class FaceAuthService {
         if (currentTime >= "18:30:00") {
             checkOut = currentTime;
         }
-
+        const tPrep = Date.now();
 
         // Run both DB operations together
         const [fullUser, logResult, attendanceResult] = await Promise.all([
@@ -212,6 +222,7 @@ class FaceAuthService {
             )
 
         ]);
+        const tDb = Date.now();
 
         if (!fullUser) {
             throw new Error("User account not found.");
@@ -230,6 +241,14 @@ class FaceAuthService {
             {
                 expiresIn: "1h"
             }
+        );
+        const tToken = Date.now();
+
+        console.log(
+            `[verifyFace] embed=${tEmbed - t0}ms cache=${tCache - tEmbed}ms ` +
+            `match=${tMatch - tCache}ms prep=${tPrep - tMatch}ms db=${tDb - tPrep}ms ` +
+            `token=${tToken - tDb}ms total=${tToken - t0}ms ` +
+            `(users compared=${users.length}, action=${logResult.action})`
         );
 
         return {
