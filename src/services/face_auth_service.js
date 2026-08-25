@@ -11,7 +11,7 @@ class FaceAuthService {
 
     static embeddingCache = [];
     static cacheLoadedAt = 0;
-    static CACHE_TTL = 5 * 60 * 1000; // 5 Minutes
+    static CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 Days
 
     /**
      * Cosine similarity between two float arrays
